@@ -1,6 +1,10 @@
 package org.example.database;
 
+import org.example.entities.Product;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnection {
 
@@ -44,5 +48,35 @@ public class DatabaseConnection {
         if (usr.equals(username) && pwd.equals(password))
             return true;
         return false;
+    }
+
+    private List<Product> getProducts(Connection connection) throws SQLException {
+        List<Product> products = new ArrayList<>();
+        String getAllProducts = "SELECT * FROM TB_PRODUCTS";
+        PreparedStatement statement = connection.prepareStatement(getAllProducts);
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            Long id = rs.getLong("ID");
+            String name = rs.getString("NAME");
+            String description = rs.getString("DESCRIPTION");
+            products.add(new Product(id, name, description));
+        }
+        return products;
+    }
+
+    private List<Product> getProductsByName(String name, Connection connection) throws SQLException {
+        String sql = "SELECT * FROM TB_PRODUCTS WHERE NAME LIKE ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, "%" + name + "%");
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            Long id = rs.getLong("ID");
+            String productName = rs.getString("NAME");
+            //String
+        }
+
+        return new ArrayList<>();
     }
 }
