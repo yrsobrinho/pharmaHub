@@ -6,8 +6,8 @@ import java.awt.*;
 public class GraphicalUserInterface {
 
     public class ProductSearchInterface extends JFrame {
-        JPanel centralizeItems = new JPanel();
-        JPanel searchPanel = new JPanel();
+        JPanel centralizeItems = new JPanel(new GridBagLayout());
+        JPanel searchPanel = new JPanel(new GridBagLayout());
         JLabel searchField = new JLabel("Consultar por: ");
         JComboBox<String> searchBy = new JComboBox<>();
 
@@ -17,14 +17,16 @@ public class GraphicalUserInterface {
             searchBy.addItem("ID do Produto");
             searchBy.addItem("ID do Fabricante");
 
-            searchPanel.setLayout(new GridLayout(2, 1));
-            searchPanel.add(searchField, BorderLayout.SOUTH);
-            searchPanel.add(searchBy, BorderLayout.NORTH);
-
             GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.CENTER;
+            searchPanel.add(searchField, gbc);
+
+            gbc.gridy++;
+            searchPanel.add(searchBy, gbc);
 
             centralizeItems.add(searchPanel, gbc);
 
@@ -40,14 +42,16 @@ public class GraphicalUserInterface {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
 
-        JLabel registrationFirld = new JLabel("Identifique o produto a ser adicionado: ");
-        JLabel nameLabel = new JLabel("Nome do Produto: ");
-        JLabel idLabel = new JLabel("ID do Produto: ");
-        JLabel manufacturerIdLabel = new JLabel("ID do Fabricante: ");
+        JLabel registrationField = new JLabel("Identifique o produto a ser adicionado: ");
+        JLabel nameLabel = new JLabel("Nome: ");
+        JLabel priceLabel = new JLabel("Preço: ");
+        JLabel manufacturerIDLabel = new JLabel("ID do Fabricante: ");
+        JLabel categoryLabel = new JLabel("Categoria: ");
 
         JTextField productName = new JTextField(20);
-        JTextField productDescription = new JTextField(20);
         JTextField productIDManufacturer = new JTextField(20);
+        JTextField productPrice = new JTextField(20);
+        JTextField productCategory = new JTextField(20);
 
         public ProductInsertionInterface() {
             super("PharmaHub: Inserir produtos");
@@ -58,7 +62,7 @@ public class GraphicalUserInterface {
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.WEST;
-            registerPanel.add(registrationFirld, gbc);
+            registerPanel.add(registrationField, gbc);
 
             gbc.gridy++;
             registerPanel.add(nameLabel, gbc);
@@ -67,13 +71,19 @@ public class GraphicalUserInterface {
 
             gbc.gridx = 0;
             gbc.gridy++;
-            registerPanel.add(idLabel, gbc);
+            registerPanel.add(categoryLabel, gbc);
             gbc.gridx = 1;
-            registerPanel.add(productDescription, gbc);
+            registerPanel.add(productCategory, gbc);
 
             gbc.gridx = 0;
             gbc.gridy++;
-            registerPanel.add(manufacturerIdLabel, gbc);
+            registerPanel.add(priceLabel, gbc);
+            gbc.gridx = 1;
+            registerPanel.add(productPrice, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            registerPanel.add(manufacturerIDLabel, gbc);
             gbc.gridx = 1;
             registerPanel.add(productIDManufacturer, gbc);
 
@@ -95,7 +105,7 @@ public class GraphicalUserInterface {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
 
-        JLabel registrationFirld = new JLabel("Preencha os campos para se registrar: ");
+        JLabel registrationField = new JLabel("Preencha os campos para se registrar: ");
         JLabel usernameLabel = new JLabel("Nome de Usuário: ");
         JLabel passwordLabel = new JLabel("Senha: ");
         JLabel confirmPasswordLabel = new JLabel("Confirme a Senha: ");
@@ -103,6 +113,7 @@ public class GraphicalUserInterface {
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
         JPasswordField confirmPasswordField = new JPasswordField(20);
+        JButton submitButton = new JButton("Enviar");
 
         public RegisterInterface() {
             super("PharmaHub: Registrar");
@@ -113,7 +124,7 @@ public class GraphicalUserInterface {
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.anchor = GridBagConstraints.WEST;
-            registerPanel.add(registrationFirld, gbc);
+            registerPanel.add(registrationField, gbc);
 
             gbc.gridy++;
             registerPanel.add(usernameLabel, gbc);
@@ -133,6 +144,12 @@ public class GraphicalUserInterface {
             registerPanel.add(confirmPasswordField, gbc);
 
             gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            registerPanel.add(submitButton, gbc);
+
+            gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
@@ -146,9 +163,68 @@ public class GraphicalUserInterface {
         }
     }
 
+    public class LoginInterface extends JFrame {
+        JPanel centralizeItems = new JPanel(new GridBagLayout());
+        JPanel loginPanel = new JPanel(new GridBagLayout());
+
+        JLabel loginField = new JLabel("Entre com suas credenciais: ");
+        JLabel usernameLabel = new JLabel("Nome de Usuário: ");
+        JLabel passwordLabel = new JLabel("Senha: ");
+
+        JTextField usernameField = new JTextField(20);
+        JPasswordField passwordField = new JPasswordField(20);
+        JButton submitButton = new JButton("Enviar");
+
+        public LoginInterface() {
+            super("PharmaHub: Login");
+
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.WEST;
+            loginPanel.add(loginField, gbc);
+
+            gbc.gridy++;
+            loginPanel.add(usernameLabel, gbc);
+            gbc.gridx = 1;
+            loginPanel.add(usernameField, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            loginPanel.add(passwordLabel, gbc);
+            gbc.gridx = 1;
+            loginPanel.add(passwordField, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            loginPanel.add(submitButton, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            centralizeItems.add(loginPanel, gbc);
+
+            add(centralizeItems);
+
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            pack();
+            setVisible(true);
+        }
+    }
+
     public static void main(String[] args) {
-        new GraphicalUserInterface().new RegisterInterface();
+        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductSearchInterface());
+        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductInsertionInterface());
+        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new RegisterInterface());
+        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new LoginInterface());
     }
 }
+
+
 
 
