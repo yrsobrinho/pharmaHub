@@ -1,9 +1,6 @@
 package org.example.database;
 
-<<<<<<< HEAD
-=======
 import org.example.entities.Category;
->>>>>>> 203e50aa1a9f0ea443d23b00ae4b0a8436b7394d
 import org.example.entities.Product;
 
 import java.sql.*;
