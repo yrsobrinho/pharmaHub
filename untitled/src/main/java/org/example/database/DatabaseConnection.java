@@ -43,12 +43,11 @@ public class DatabaseConnection {
 
         ResultSet rs = statement.executeQuery();
         rs.next();
+        statement.close();
         String usr = rs.getString("USERNAME");
         String pwd = rs.getString("PASSWORD");
 
-        if (usr.equals(username) && pwd.equals(password))
-            return true;
-        return false;
+        return usr.equals(username) && pwd.equals(password);
     }
 
     private boolean insertProduct(Product product, Connection connection) throws SQLException {
@@ -61,6 +60,7 @@ public class DatabaseConnection {
         checkProduct.setString(1, product.getName());
         ResultSet resultSet = checkProduct.executeQuery();
         resultSet.next();
+        checkProduct.close();
 
         if (!resultSet.getString("NAME").isEmpty())
             return false;
@@ -71,9 +71,7 @@ public class DatabaseConnection {
         int affectedRows = statement.executeUpdate();
         statement.close();
 
-        if (affectedRows != 0)
-            return true;
-        return false;
+        return affectedRows != 0;
     }
 
     private List<Product> searchByProductName(String name, Connection connection) throws SQLException {
@@ -88,6 +86,7 @@ public class DatabaseConnection {
             String productName = rs.getString("NAME");
             products.add(new Product(rs.getLong("ID"), rs.getString("NAME"), (Category) rs.getObject("CATEGORY"), rs.getDouble("PRICE")));
         }
+        statement.close();
         return products;
     }
 
@@ -102,8 +101,10 @@ public class DatabaseConnection {
             String productName = rs.getString("NAME");
             Object productCategory = rs.getObject("CATEGORY");
             Double productPrice = rs.getDouble("PRICE");
+            statement.close();
             return new Product(productId, productName, (Category) productCategory, productPrice);
         }
+        statement.close();
         return null;
     }
 
@@ -117,8 +118,19 @@ public class DatabaseConnection {
             String productName = rs.getString("NAME");
             Object productCategory = rs.getString("CATEGORY");
             Double productPrice = rs.getDouble("PRICE");
+            statement.close();
             return new Product(productId, productName, (Category) productCategory, productPrice);
         }
+        statement.close();
         return null;
+    }
+
+    private boolean deleteProductById(Long id, Connection connection) throws SQLException {
+        String sql = "DELETE FROM TB_PRODUCTS WHERE ID = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setLong(1, id);
+        int affectedRows = statement.executeUpdate();
+        statement.close();
+        return affectedRows != 0;
     }
 }
