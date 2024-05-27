@@ -19,11 +19,12 @@ public class GraphicalUserInterface {
             add(searchBy);
 
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setSize(400, 200);
             pack();
             setVisible(true);
         }
     }
+
+
 
     public static void main(String[] args) {
         new GraphicalUserInterface().new ProductSearchInterface();

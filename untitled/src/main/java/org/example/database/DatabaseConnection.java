@@ -1,5 +1,7 @@
 package org.example.database;
 
+import org.example.entities.Product;
+
 import java.sql.*;
 
 public class DatabaseConnection {
@@ -24,8 +26,8 @@ public class DatabaseConnection {
 
         // Registrando usuário no banco de dados
         if (result.isEmpty()) {
-            statement.executeUpdate();
             statement = connection.prepareStatement("INSERT INTO TB_USERS (USERNAME, PASSWORD) VALUES (?, ?)");
+            statement.executeUpdate();
             return true;
         }
         return false;
@@ -42,6 +44,31 @@ public class DatabaseConnection {
         String pwd = rs.getString("PASSWORD");
 
         if (usr.equals(username) && pwd.equals(password))
+            return true;
+        return false;
+    }
+
+    private boolean insertProduct(Product product, Connection connection) throws SQLException {
+        String sql = "INSERT INTO TB_PRODUCTS(NAME, DESCRIPTION, PRICE) VALUES (?, ?, ?)";
+        String checkIfExists = "SELECT * FROM TB_PRODUCTS WHERE NAME = ?";
+
+        PreparedStatement checkProduct = connection.prepareStatement(checkIfExists);
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        checkProduct.setString(1, product.getName());
+        ResultSet resultSet = checkProduct.executeQuery();
+        resultSet.next();
+
+        if (!resultSet.getString("NAME").isEmpty())
+            return false;
+
+        statement.setString(1, product.getName());
+        statement.setString(2, product.getDescription());
+        statement.setDouble(3, product.getPrice());
+        int affectedRows = statement.executeUpdate();
+        statement.close();
+
+        if (affectedRows != 0)
             return true;
         return false;
     }
