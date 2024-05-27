@@ -1,4 +1,4 @@
-package org.example.entities;
+package org.example;
 
 public class Manufacturer {
     private int id;

@@ -1,7 +1,9 @@
-package org.example.graphics;
+package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GraphicalUserInterface {
 
@@ -163,7 +165,7 @@ public class GraphicalUserInterface {
         }
     }
 
-    public class LoginInterface extends JFrame {
+    public class LoginInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel loginPanel = new JPanel(new GridBagLayout());
 
@@ -215,9 +217,12 @@ public class GraphicalUserInterface {
             pack();
             setVisible(true);
         }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+
+        }
     }
-
-
 
     public static void main(String[] args) {
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductSearchInterface());

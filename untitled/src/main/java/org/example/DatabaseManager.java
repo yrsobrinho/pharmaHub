@@ -1,22 +1,19 @@
-package org.example.database;
-
-import org.example.entities.Category;
-import org.example.entities.Product;
+package org.example;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseConnection {
+public class DatabaseManager {
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.hsql.jdbcDriver");
         String url = "jdbc:hsqldb:mem:test";
-
-        Connection connection = DriverManager.getConnection(url);
+        return DriverManager.getConnection(url);
     }
 
-    private boolean registerUser(String username, String password, Connection connection) throws SQLException {
+    public static boolean registerUser(String username, String password) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         // Checando se usuário já existe no banco de dados
         String checkUser = "SELECT USERNAME FROM TB_USERS WHERE USERNAME = ?";
         PreparedStatement statement = connection.prepareStatement(checkUser);
@@ -36,7 +33,8 @@ public class DatabaseConnection {
         return false;
     }
 
-    private boolean login(String username, String password, Connection connection) throws SQLException {
+    public static boolean login(String username, String password) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         String checkUser = "SELECT * FROM TB_USERS WHERE USERNAME = ?";
         PreparedStatement statement = connection.prepareStatement(checkUser);
         statement.setString(1, username);
@@ -50,7 +48,8 @@ public class DatabaseConnection {
         return usr.equals(username) && pwd.equals(password);
     }
 
-    private boolean insertProduct(Product product, Connection connection) throws SQLException {
+    public static boolean insertProduct(Product product) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         String sql = "INSERT INTO TB_PRODUCTS(NAME, DESCRIPTION, PRICE) VALUES (?, ?, ?)";
         String checkIfExists = "SELECT * FROM TB_PRODUCTS WHERE NAME = ?";
 
@@ -74,7 +73,8 @@ public class DatabaseConnection {
         return affectedRows != 0;
     }
 
-    private List<Product> searchByProductName(String name, Connection connection) throws SQLException {
+    public static List<Product> searchByProductName(String name) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE NAME LIKE ?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -90,7 +90,8 @@ public class DatabaseConnection {
         return products;
     }
 
-    private Product searchByProductId(Long id, Connection connection) throws SQLException {
+    public static Product searchByProductId(Long id) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setLong(1, id);
@@ -108,7 +109,8 @@ public class DatabaseConnection {
         return null;
     }
 
-    private Product searchByManufacturerId(Long id, Connection connection) throws SQLException {
+    public static Product searchByManufacturerId(Long id) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE MANUFACTURER_ID = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setLong(1, id);
@@ -125,7 +127,8 @@ public class DatabaseConnection {
         return null;
     }
 
-    private boolean deleteProductById(Long id, Connection connection) throws SQLException {
+    public static boolean deleteProductById(Long id) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
         String sql = "DELETE FROM TB_PRODUCTS WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setLong(1, id);
