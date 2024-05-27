@@ -1,8 +1,14 @@
 package org.example.database;
 
+<<<<<<< HEAD
+=======
+import org.example.entities.Category;
+>>>>>>> 203e50aa1a9f0ea443d23b00ae4b0a8436b7394d
 import org.example.entities.Product;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnection {
 
@@ -63,7 +69,7 @@ public class DatabaseConnection {
             return false;
 
         statement.setString(1, product.getName());
-        statement.setString(2, product.getDescription());
+        statement.setObject(2, product.getCategory());
         statement.setDouble(3, product.getPrice());
         int affectedRows = statement.executeUpdate();
         statement.close();
@@ -71,5 +77,51 @@ public class DatabaseConnection {
         if (affectedRows != 0)
             return true;
         return false;
+    }
+
+    private List<Product> searchByProductName(String name, Connection connection) throws SQLException {
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM TB_PRODUCTS WHERE NAME LIKE ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, name);
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            Long id = rs.getLong("ID");
+            String productName = rs.getString("NAME");
+            products.add(new Product(rs.getLong("ID"), rs.getString("NAME"), (Category) rs.getObject("CATEGORY"), rs.getDouble("PRICE")));
+        }
+        return products;
+    }
+
+    private Product searchByProductId(Long id, Connection connection) throws SQLException {
+        String sql = "SELECT * FROM TB_PRODUCTS WHERE ID = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setLong(1, id);
+        ResultSet rs = statement.executeQuery();
+
+        if (rs.next()) {
+            Long productId = rs.getLong("ID");
+            String productName = rs.getString("NAME");
+            Object productCategory = rs.getObject("CATEGORY");
+            Double productPrice = rs.getDouble("PRICE");
+            return new Product(productId, productName, (Category) productCategory, productPrice);
+        }
+        return null;
+    }
+
+    private Product searchByManufacturerId(Long id, Connection connection) throws SQLException {
+        String sql = "SELECT * FROM TB_PRODUCTS WHERE MANUFACTURER_ID = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setLong(1, id);
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            Long productId = rs.getLong("ID");
+            String productName = rs.getString("NAME");
+            Object productCategory = rs.getString("CATEGORY");
+            Double productPrice = rs.getDouble("PRICE");
+            return new Product(productId, productName, (Category) productCategory, productPrice);
+        }
+        return null;
     }
 }
