@@ -4,8 +4,68 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 public class GraphicalUserInterface {
+
+    public class GeneralInterface extends JFrame {
+
+        public GeneralInterface() {
+            super("PharmaHub: Principal");
+
+            JPanel buttonPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+
+            JButton productSearchButton = new JButton("Consultar Produtos");
+            JButton productInsertButton = new JButton("Inserir Produtos");
+            JButton exitButton = new JButton("Sair");
+            
+            Dimension buttonSize = new Dimension(200, 50);
+            productSearchButton.setPreferredSize(buttonSize);
+            productInsertButton.setPreferredSize(buttonSize);
+            exitButton.setPreferredSize(buttonSize);
+
+            productSearchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ProductSearchInterface();
+                }
+            });
+
+            productInsertButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ProductInsertionInterface();
+                }
+            });
+
+            exitButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+
+            // Layout buttons on the panel
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            buttonPanel.add(productSearchButton, gbc);
+
+            gbc.gridy++;
+            buttonPanel.add(productInsertButton, gbc);
+
+            gbc.gridy++;
+            buttonPanel.add(exitButton, gbc);
+
+            add(buttonPanel, BorderLayout.CENTER);
+
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            pack();
+            setVisible(true);
+        }
+    }
+
 
     public class ProductSearchInterface extends JFrame {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
@@ -40,7 +100,7 @@ public class GraphicalUserInterface {
         }
     }
 
-    public class ProductInsertionInterface extends JFrame {
+    public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
 
@@ -101,9 +161,13 @@ public class GraphicalUserInterface {
             pack();
             setVisible(true);
         }
+
+        public void actionPerformed(ActionEvent e) {
+
+        }
     }
 
-    public class RegisterInterface extends JFrame {
+    public class RegisterInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
 
@@ -122,6 +186,7 @@ public class GraphicalUserInterface {
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
+            submitButton.addActionListener(this);
 
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -163,6 +228,19 @@ public class GraphicalUserInterface {
             pack();
             setVisible(true);
         }
+
+        public void actionPerformed(ActionEvent e) {
+            if (passwordField.getText().equals(confirmPasswordField.getText())) {
+                try {
+                    DatabaseManager.register(usernameField.getText(), passwordField.getText());
+                } catch (SQLException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(new JFrame(), "As senhas não coincidem.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     public class LoginInterface extends JFrame implements ActionListener {
@@ -182,6 +260,7 @@ public class GraphicalUserInterface {
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
+            submitButton.addActionListener(this);
 
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -220,15 +299,26 @@ public class GraphicalUserInterface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            boolean authenticated = false;
+            try {
+                authenticated = DatabaseManager.login(usernameField.getText(), passwordField.getText());
+            } catch (SQLException | ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+            if (authenticated) {
+                // mostrar tela apos login do usuario, prosseguir no fluxo da aplicacao (usuario loga -> tem acesso a tela x etc)
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(), "Credenciais incorretas.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
     public static void main(String[] args) {
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductSearchInterface());
-        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductInsertionInterface());
+        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductInsertionInterface());
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new RegisterInterface());
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new LoginInterface());
+        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new GeneralInterface());
     }
 }
 

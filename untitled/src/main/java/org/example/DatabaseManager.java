@@ -9,10 +9,10 @@ public class DatabaseManager {
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.hsql.jdbcDriver");
         String url = "jdbc:hsqldb:mem:test";
-        return DriverManager.getConnection(url);
+        return DriverManager.getConnection(url, "SA", "");
     }
 
-    public static boolean registerUser(String username, String password) throws SQLException, ClassNotFoundException {
+    public static boolean register(String username, String password) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         // Checando se usuário já existe no banco de dados
         String checkUser = "SELECT USERNAME FROM TB_USERS WHERE USERNAME = ?";
@@ -27,6 +27,8 @@ public class DatabaseManager {
         // Registrando usuário no banco de dados
         if (result.isEmpty()) {
             statement = connection.prepareStatement("INSERT INTO TB_USERS (USERNAME, PASSWORD) VALUES (?, ?)");
+            statement.setString(1, username);
+            statement.setString(2, password);
             statement.executeUpdate();
             return true;
         }
@@ -50,7 +52,7 @@ public class DatabaseManager {
 
     public static boolean insertProduct(Product product) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
-        String sql = "INSERT INTO TB_PRODUCTS(NAME, DESCRIPTION, PRICE) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO TB_PRODUCTS(NAME, MANUFACTURER_ID, PRICE) VALUES (?, ?, ?)";
         String checkIfExists = "SELECT * FROM TB_PRODUCTS WHERE NAME = ?";
 
         PreparedStatement checkProduct = connection.prepareStatement(checkIfExists);
@@ -65,7 +67,7 @@ public class DatabaseManager {
             return false;
 
         statement.setString(1, product.getName());
-        statement.setObject(2, product.getCategory());
+        statement.setLong(2, product.getManufacturer().getId());
         statement.setDouble(3, product.getPrice());
         int affectedRows = statement.executeUpdate();
         statement.close();
@@ -84,10 +86,24 @@ public class DatabaseManager {
         while (rs.next()) {
             Long id = rs.getLong("ID");
             String productName = rs.getString("NAME");
-            products.add(new Product(rs.getLong("ID"), rs.getString("NAME"), (Category) rs.getObject("CATEGORY"), rs.getDouble("PRICE")));
+            Double price = rs.getDouble("PRICE");
+            Manufacturer m = DatabaseManager.searchManufacturerById(rs.getLong("MANUFACTURER_ID"));
+            if (m != null)
+                products.add(new Product(id, productName, price, m));
         }
         statement.close();
         return products;
+    }
+
+    public static Manufacturer searchManufacturerById(Long id) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String manufacturer = "SELECT * FROM TB_MANUFACTURERS WHERE ID = ?";
+        PreparedStatement manufacturerStatement = connection.prepareStatement(manufacturer);
+        manufacturerStatement.setLong(1, id);
+        ResultSet rsManufacturer = manufacturerStatement.executeQuery();
+        if (rsManufacturer.next())
+            return new Manufacturer(rsManufacturer.getLong("ID"), rsManufacturer.getString("NAME"));
+        return null;
     }
 
     public static Product searchByProductId(Long id) throws SQLException, ClassNotFoundException {
@@ -100,31 +116,31 @@ public class DatabaseManager {
         if (rs.next()) {
             Long productId = rs.getLong("ID");
             String productName = rs.getString("NAME");
-            Object productCategory = rs.getObject("CATEGORY");
             Double productPrice = rs.getDouble("PRICE");
+            Manufacturer m = DatabaseManager.searchManufacturerById(rs.getLong("MANUFACTURER_ID"));
             statement.close();
-            return new Product(productId, productName, (Category) productCategory, productPrice);
+            return new Product(productId, productName, productPrice, m);
         }
         statement.close();
         return null;
     }
 
-    public static Product searchByManufacturerId(Long id) throws SQLException, ClassNotFoundException {
+    public static List<Product> searchProductsByManufacturerId(Long id) throws SQLException, ClassNotFoundException {
+        List<Product> products = new ArrayList<>();
         Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE MANUFACTURER_ID = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setLong(1, id);
         ResultSet rs = statement.executeQuery();
         if (rs.next()) {
+            Manufacturer m = DatabaseManager.searchManufacturerById(rs.getLong("MANUFACTURER_ID"));
             Long productId = rs.getLong("ID");
             String productName = rs.getString("NAME");
-            Object productCategory = rs.getString("CATEGORY");
             Double productPrice = rs.getDouble("PRICE");
-            statement.close();
-            return new Product(productId, productName, (Category) productCategory, productPrice);
+            products.add(new Product(productId, productName,productPrice, m));
         }
         statement.close();
-        return null;
+        return products;
     }
 
     public static boolean deleteProductById(Long id) throws SQLException, ClassNotFoundException {
@@ -136,4 +152,30 @@ public class DatabaseManager {
         statement.close();
         return affectedRows != 0;
     }
+
+    public static void createUserTable() throws SQLException, ClassNotFoundException {
+        String userTableQuery = "CREATE TABLE TB_USERS (id LONG PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
+        Connection connection = DatabaseManager.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute(userTableQuery);
+        statement.close();
+    };
+
+    public static void createManufacturerTable() throws SQLException, ClassNotFoundException {
+        String userTableQuery = "CREATE TABLE TB_MANUFACTURERS (id LONG PRIMARY KEY, name VARCHAR(255))";
+        Connection connection = DatabaseManager.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute(userTableQuery);
+        statement.close();
+    };
+
+    public static void createProductTable() throws SQLException, ClassNotFoundException {
+        String userTableQuery = "CREATE TABLE TB_USERS (id LONG PRIMARY KEY, name VARCHAR(255), price DOUBLE PRECISION)";
+        String addForeignKey = "ALTER TABLE TB_USERS ADD FOREIGN KEY (manufacturer_id) REFERENCES TB_MANUFACTURERS(id)";
+        Connection connection = DatabaseManager.getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute(userTableQuery);
+        statement.execute(addForeignKey);
+        statement.close();
+    };
 }

@@ -4,21 +4,21 @@ public class Product {
     private Long id;
     private String name;
     private Double price;
-    private Category category;
+    private Manufacturer manufacturer;
 
-    public Product(Long id, String name, Category category, Double price) {
+    public Product(Long id, String name, Double price, Manufacturer manufacturer) {
         this.id = id;
         this.name = name;
-        this.category = category;
         this.price = price;
+        this.manufacturer = manufacturer;
     }
 
-    public Category getCategory() {
-        return category;
+    public Manufacturer getManufacturer() {
+        return manufacturer;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
     }
 
     public Long getId() {
