@@ -8,7 +8,7 @@ public class DatabaseManager {
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.hsql.jdbcDriver");
-        String url = "jdbc:hsqldb:mem:test";
+        String url = "jdbc:HypersonicSQL:mem:mymemdb";
         return DriverManager.getConnection(url, "SA", "");
     }
 
