@@ -6,10 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
+import static javax.swing.text.StyleConstants.setBackground;
+
 public class GraphicalUserInterface {
-
     public class GeneralInterface extends JFrame {
-
         public GeneralInterface() {
             super("PharmaHub: Principal");
 
@@ -20,7 +20,7 @@ public class GraphicalUserInterface {
             JButton productSearchButton = new JButton("Consultar Produtos");
             JButton productInsertButton = new JButton("Inserir Produtos");
             JButton exitButton = new JButton("Sair");
-            
+
             Dimension buttonSize = new Dimension(200, 50);
             productSearchButton.setPreferredSize(buttonSize);
             productInsertButton.setPreferredSize(buttonSize);
