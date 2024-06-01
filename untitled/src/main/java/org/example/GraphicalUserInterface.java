@@ -263,7 +263,13 @@ public class GraphicalUserInterface {
         public void actionPerformed(ActionEvent e) {
             if (passwordField.getText().equals(confirmPasswordField.getText())) {
                 try {
-                    DatabaseManager.register(usernameField.getText(), passwordField.getText());
+                    if (DatabaseManager.register(usernameField.getText(), passwordField.getText())) {
+                        // mostrar tela depois do registro ou modal escrito "registro com sucesso"
+                        System.out.println("yasmi");
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(new JFrame(), "Não foi possível registrar esse usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (SQLException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -337,19 +343,22 @@ public class GraphicalUserInterface {
                 throw new RuntimeException(ex);
             }
             if (authenticated) {
-                // mostrar tela apos login do usuario, prosseguir no fluxo da aplicacao (usuario loga -> tem acesso a tela x etc)
+                new GeneralInterface();
             } else {
                 JOptionPane.showMessageDialog(new JFrame(), "Credenciais incorretas.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        DatabaseManager.createUserTable();
+        DatabaseManager.createManufacturerTable();
+        DatabaseManager.createProductTable();
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductSearchInterface());
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductInsertionInterface());
-        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new RegisterInterface());
+        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new RegisterInterface());
         //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new LoginInterface());
-        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new GeneralInterface());
+        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new GeneralInterface());
     }
 }
 

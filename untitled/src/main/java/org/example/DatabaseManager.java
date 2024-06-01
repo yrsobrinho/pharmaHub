@@ -19,20 +19,20 @@ public class DatabaseManager {
         PreparedStatement statement = connection.prepareStatement(checkUser);
         statement.setString(1, username);
 
-        ResultSet rs = statement.executeQuery(checkUser);
-        rs.next();
-        String result = rs.getString("USERNAME");
-        statement.close();
+        ResultSet rs = statement.executeQuery();
 
-        // Registrando usuário no banco de dados
-        if (result.isEmpty()) {
+        if (rs.next()) {
+            statement.close();
+            return false;
+        }
+        else {
+            // Registrando usuário no banco de dados
             statement = connection.prepareStatement("INSERT INTO TB_USERS (USERNAME, PASSWORD) VALUES (?, ?)");
             statement.setString(1, username);
             statement.setString(2, password);
             statement.executeUpdate();
             return true;
         }
-        return false;
     }
 
     public static boolean login(String username, String password) throws SQLException, ClassNotFoundException {
