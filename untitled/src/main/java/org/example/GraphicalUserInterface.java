@@ -265,7 +265,7 @@ public class GraphicalUserInterface {
                 try {
                     if (DatabaseManager.register(usernameField.getText(), passwordField.getText())) {
                         // mostrar tela depois do registro ou modal escrito "registro com sucesso"
-                        System.out.println("yasmi");
+                        new LoginInterface();
                     }
                     else {
                         JOptionPane.showMessageDialog(new JFrame(), "Não foi possível registrar esse usuário.", "Erro", JOptionPane.ERROR_MESSAGE);

@@ -42,12 +42,14 @@ public class DatabaseManager {
         statement.setString(1, username);
 
         ResultSet rs = statement.executeQuery();
-        rs.next();
+        if (rs.next()) {
+            String usr = rs.getString("USERNAME");
+            String pwd = rs.getString("PASSWORD");
+            statement.close();
+            return usr.equals(username) && pwd.equals(password);
+        }
         statement.close();
-        String usr = rs.getString("USERNAME");
-        String pwd = rs.getString("PASSWORD");
-
-        return usr.equals(username) && pwd.equals(password);
+        return false;
     }
 
     public static boolean insertProduct(Product product) throws SQLException, ClassNotFoundException {
