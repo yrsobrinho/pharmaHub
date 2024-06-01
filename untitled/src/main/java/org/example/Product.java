@@ -1,12 +1,12 @@
 package org.example;
 
 public class Product {
-    private Long id;
+    private int id;
     private String name;
     private Double price;
     private Manufacturer manufacturer;
 
-    public Product(Long id, String name, Double price, Manufacturer manufacturer) {
+    public Product(int id, String name, Double price, Manufacturer manufacturer) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -21,11 +21,11 @@ public class Product {
         this.manufacturer = manufacturer;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

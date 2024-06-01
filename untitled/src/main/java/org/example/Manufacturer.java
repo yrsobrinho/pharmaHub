@@ -1,19 +1,19 @@
 package org.example;
 
 public class Manufacturer {
-    private Long id;
+    private int id;
     private String name;
 
-    public Manufacturer(Long id, String name) {
+    public Manufacturer(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

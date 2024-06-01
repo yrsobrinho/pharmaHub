@@ -67,11 +67,12 @@ public class GraphicalUserInterface {
     }
 
 
-    public class ProductSearchInterface extends JFrame {
+    public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new GridBagLayout());
         JLabel searchField = new JLabel("Consultar por: ");
         JComboBox<String> searchBy = new JComboBox<>();
+        JButton searchButton = new JButton("Enviar");
 
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
@@ -90,13 +91,27 @@ public class GraphicalUserInterface {
             gbc.gridy++;
             searchPanel.add(searchBy, gbc);
 
+            gbc.gridy++;
+            searchPanel.add(searchButton, gbc);
+
             centralizeItems.add(searchPanel, gbc);
 
             add(centralizeItems);
 
+            searchButton.addActionListener(this);
+
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             pack();
             setVisible(true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == searchButton) {
+                String searchCriteria = (String) searchBy.getSelectedItem();
+                JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria);
+                // Adicione aqui a lógica de busca conforme o critério selecionado
+            }
         }
     }
 
@@ -114,6 +129,7 @@ public class GraphicalUserInterface {
         JTextField productIDManufacturer = new JTextField(20);
         JTextField productPrice = new JTextField(20);
         JTextField productCategory = new JTextField(20);
+        JButton insertButton = new JButton("Enviar");
 
         public ProductInsertionInterface() {
             super("PharmaHub: Inserir produtos");
@@ -149,6 +165,11 @@ public class GraphicalUserInterface {
             gbc.gridx = 1;
             registerPanel.add(productIDManufacturer, gbc);
 
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.gridwidth = 2;
+            registerPanel.add(insertButton, gbc);
+
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
@@ -157,13 +178,23 @@ public class GraphicalUserInterface {
 
             add(centralizeItems);
 
+            insertButton.addActionListener(this);
+
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             pack();
             setVisible(true);
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
-
+            if (e.getSource() == insertButton) {
+                String name = productName.getText();
+                String price = productPrice.getText();
+                String manufacturerID = productIDManufacturer.getText();
+                String category = productCategory.getText();
+                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nID do Fabricante: " + manufacturerID + "\nCategoria: " + category);
+                // Adicione aqui a lógica de inserção de produto
+            }
         }
     }
 
