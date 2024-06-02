@@ -6,9 +6,54 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
-import static javax.swing.text.StyleConstants.setBackground;
-
 public class GraphicalUserInterface {
+    public class InitialInterface extends JFrame {
+        public InitialInterface() {
+            super("PharmaHub: Início");
+
+            JPanel mainPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
+
+            // Add logo
+            JLabel logoLabel = new JLabel(new ImageIcon(".\\pharmaHub\\untitled\\src\\main\\java\\org\\example\\PharmaHub.png\""));
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.gridwidth = 2;
+            mainPanel.add(logoLabel, gbc);
+
+            JButton loginButton = new JButton("Login");
+            loginButton.setPreferredSize(new Dimension(200, 50));
+            gbc.gridy = 1;
+            gbc.gridwidth = 1;
+            mainPanel.add(loginButton, gbc);
+
+            JButton registerButton = new JButton("Registrar");
+            registerButton.setPreferredSize(new Dimension(200, 50));
+            gbc.gridx = 1;
+            mainPanel.add(registerButton, gbc);
+
+            loginButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new LoginInterface();
+                }
+            });
+
+            registerButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new RegisterInterface();
+                }
+            });
+
+            add(mainPanel, BorderLayout.CENTER);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            pack();
+            setVisible(true);
+        }
+    }
+
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
@@ -66,7 +111,6 @@ public class GraphicalUserInterface {
         }
     }
 
-
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new GridBagLayout());
@@ -77,7 +121,6 @@ public class GraphicalUserInterface {
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
             searchBy.addItem("Nome");
-            searchBy.addItem("ID do Produto");
             searchBy.addItem("ID do Fabricante");
 
             GridBagConstraints gbc = new GridBagConstraints();
@@ -354,14 +397,6 @@ public class GraphicalUserInterface {
         DatabaseManager.createUserTable();
         DatabaseManager.createManufacturerTable();
         DatabaseManager.createProductTable();
-        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductSearchInterface());
-        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new ProductInsertionInterface());
-        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new RegisterInterface());
-        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new LoginInterface());
-        //SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new GeneralInterface());
+        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new InitialInterface());
     }
 }
-
-
-
-
