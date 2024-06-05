@@ -166,12 +166,10 @@ public class GraphicalUserInterface {
         JLabel nameLabel = new JLabel("Nome: ");
         JLabel priceLabel = new JLabel("Preço: ");
         JLabel manufacturerIDLabel = new JLabel("ID do Fabricante: ");
-        JLabel categoryLabel = new JLabel("Categoria: ");
 
         JTextField productName = new JTextField(20);
         JTextField productIDManufacturer = new JTextField(20);
         JTextField productPrice = new JTextField(20);
-        JTextField productCategory = new JTextField(20);
         JButton insertButton = new JButton("Enviar");
 
         public ProductInsertionInterface() {
@@ -192,9 +190,7 @@ public class GraphicalUserInterface {
 
             gbc.gridx = 0;
             gbc.gridy++;
-            registerPanel.add(categoryLabel, gbc);
             gbc.gridx = 1;
-            registerPanel.add(productCategory, gbc);
 
             gbc.gridx = 0;
             gbc.gridy++;
@@ -234,8 +230,7 @@ public class GraphicalUserInterface {
                 String name = productName.getText();
                 String price = productPrice.getText();
                 String manufacturerID = productIDManufacturer.getText();
-                String category = productCategory.getText();
-                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nID do Fabricante: " + manufacturerID + "\nCategoria: " + category);
+                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nID do Fabricante: " + manufacturerID);
                 // Adicione aqui a lógica de inserção de produto
             }
         }

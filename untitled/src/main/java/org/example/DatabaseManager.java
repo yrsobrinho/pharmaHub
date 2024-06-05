@@ -68,6 +68,11 @@ public class DatabaseManager {
         if (!resultSet.getString("NAME").isEmpty())
             return false;
 
+        /*
+        if (searchManufacturerById(product.getManufacturer().getId()) != null)
+            return false;
+         */
+
         statement.setString(1, product.getName());
         statement.setInt(2, product.getManufacturer().getId());
         statement.setDouble(3, product.getPrice());
