@@ -160,6 +160,25 @@ public class DatabaseManager {
         return affectedRows != 0;
     }
 
+    public static boolean insertManufacturer(Manufacturer manufacturer) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String checkIfExists =  "SELECT * FROM TB_MANUFACTURERS WHERE NAME = ?";
+        PreparedStatement statement = connection.prepareStatement(checkIfExists);
+        statement.setString(1, manufacturer.getName());
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            statement.close();
+            return false;
+        }
+
+        String insert = "INSERT INTO TB_MANUFACTURERS(NAME) VALUES (?)";
+        statement = connection.prepareStatement(insert);
+        statement.setString(1, manufacturer.getName());
+        statement.executeUpdate();
+        statement.close();
+        return true;
+    }
+
     public static void createUserTable() throws SQLException, ClassNotFoundException {
         String userTableQuery = "CREATE TABLE TB_USERS (id INT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
         Connection connection = DatabaseManager.getConnection();
