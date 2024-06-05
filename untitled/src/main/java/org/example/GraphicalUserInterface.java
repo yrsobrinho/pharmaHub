@@ -394,9 +394,14 @@ public class GraphicalUserInterface {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        DatabaseManager.createUserTable();
-        DatabaseManager.createManufacturerTable();
-        DatabaseManager.createProductTable();
+        try {
+            DatabaseManager.createUserTable();
+            DatabaseManager.createManufacturerTable();
+            DatabaseManager.createProductTable();
+        } catch(SQLException ex) {
+            System.out.println("As tabelas já foram criadas!");
+            System.out.println(ex.getMessage());
+        }
         SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new InitialInterface());
     }
 }
