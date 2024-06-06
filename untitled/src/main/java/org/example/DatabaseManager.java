@@ -113,6 +113,38 @@ public class DatabaseManager {
         return null;
     }
 
+    public static List<Product> searchProductsByManufacturerName(String name) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String manufacturerQuery = "SELECT * FROM TB_MANUFACTURERS WHERE NAME LIKE ?";
+        PreparedStatement manufacturerStatement = connection.prepareStatement(manufacturerQuery);
+        manufacturerStatement.setString(1, name);
+        ResultSet rsManufacturer = manufacturerStatement.executeQuery();
+        Manufacturer m;
+        if (rsManufacturer.next()) {
+            int id = rsManufacturer.getInt("ID");
+            String manufacturerName = rsManufacturer.getString("NAME");
+            m = new Manufacturer(id, manufacturerName);
+            manufacturerStatement.close();
+        }
+        else
+            return null;
+
+        List<Product> products = new ArrayList<>();
+        String sql = "SELECT * FROM TB_PRODUCTS WHERE NAME LIKE ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, name);
+        ResultSet rs = statement.executeQuery();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String productName = rs.getString("NAME");
+            Double price = rs.getDouble("PRICE");
+            products.add(new Product(id, productName, price, m));
+        }
+        statement.close();
+        return products;
+    }
+
     public static Product searchByProductId(int id) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE ID = ?";
