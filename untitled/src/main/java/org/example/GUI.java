@@ -4,32 +4,61 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.sql.SQLException;
 
-public class GraphicalUserInterface {
+public class GUI {
+
+    private void setWindowIcon(JFrame frame) {
+        try {
+            BufferedImage iconImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
+            frame.setIconImage(iconImage);
+        } catch (IOException e) {
+            System.err.println("Icon image not found.");
+        }
+    }
+
     public class InitialInterface extends JFrame {
         public InitialInterface() {
             super("PharmaHub: Início");
+            setWindowIcon(this);  // Define o ícone da janela
 
             JPanel mainPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            // Add logo
-            JLabel logoLabel = new JLabel(new ImageIcon(".\\pharmaHub\\untitled\\src\\main\\java\\org\\example\\PharmaHub.png\""));
+            // Tenta carregar e redimensionar o ícone da imagem
+            ImageIcon logoIcon = null;
+            try {
+                BufferedImage logoImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
+                Image scaledImage = logoImage.getScaledInstance(400, 400, Image.SCALE_SMOOTH);
+                logoIcon = new ImageIcon(scaledImage);
+            } catch (IOException e) {
+                System.err.println("Logo image not found.");
+            }
+
+            JLabel logoLabel = new JLabel(logoIcon);
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
             mainPanel.add(logoLabel, gbc);
 
             JButton loginButton = new JButton("Login");
             loginButton.setPreferredSize(new Dimension(200, 50));
+            loginButton.setBackground(Color.WHITE);
+            loginButton.setForeground(Color.BLACK);
             gbc.gridy = 1;
             gbc.gridwidth = 1;
+            gbc.anchor = GridBagConstraints.CENTER;
             mainPanel.add(loginButton, gbc);
 
             JButton registerButton = new JButton("Registrar");
             registerButton.setPreferredSize(new Dimension(200, 50));
+            registerButton.setBackground(Color.WHITE);
+            registerButton.setForeground(Color.BLACK);
             gbc.gridx = 1;
             mainPanel.add(registerButton, gbc);
 
@@ -49,7 +78,8 @@ public class GraphicalUserInterface {
 
             add(mainPanel, BorderLayout.CENTER);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setLocationRelativeTo(null);
             setVisible(true);
         }
     }
@@ -57,6 +87,7 @@ public class GraphicalUserInterface {
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
+            setWindowIcon(this);  // Define o ícone da janela
 
             JPanel buttonPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
@@ -68,8 +99,16 @@ public class GraphicalUserInterface {
 
             Dimension buttonSize = new Dimension(200, 50);
             productSearchButton.setPreferredSize(buttonSize);
+            productSearchButton.setBackground(Color.WHITE);
+            productSearchButton.setForeground(Color.BLACK);
+
             productInsertButton.setPreferredSize(buttonSize);
+            productInsertButton.setBackground(Color.WHITE);
+            productInsertButton.setForeground(Color.BLACK);
+
             exitButton.setPreferredSize(buttonSize);
+            exitButton.setBackground(Color.WHITE);
+            exitButton.setForeground(Color.BLACK);
 
             productSearchButton.addActionListener(new ActionListener() {
                 @Override
@@ -104,47 +143,49 @@ public class GraphicalUserInterface {
             buttonPanel.add(exitButton, gbc);
 
             add(buttonPanel, BorderLayout.CENTER);
-
+            setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
             setVisible(true);
         }
     }
 
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
-        JPanel searchPanel = new JPanel(new GridBagLayout());
-        JLabel searchField = new JLabel("Consultar por: ");
+        JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
+        JLabel searchFieldLabel = new JLabel("Consultar por: ");
         JComboBox<String> searchBy = new JComboBox<>();
+        JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Enviar");
 
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
+            setWindowIcon(this);
+
             searchBy.addItem("Nome");
             searchBy.addItem("ID do Fabricante");
 
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
+            searchButton.setBackground(Color.WHITE);
+            searchButton.setForeground(Color.BLACK);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.CENTER;
-            searchPanel.add(searchField, gbc);
+            searchField.setPreferredSize(new Dimension(300, 30));
 
-            gbc.gridy++;
-            searchPanel.add(searchBy, gbc);
+            JPanel comboBoxPanel = new JPanel(new BorderLayout(5, 5));
+            comboBoxPanel.add(searchFieldLabel, BorderLayout.WEST);
+            comboBoxPanel.add(searchBy, BorderLayout.CENTER);
 
-            gbc.gridy++;
-            searchPanel.add(searchButton, gbc);
+            searchPanel.add(comboBoxPanel, BorderLayout.NORTH);
+            searchPanel.add(searchField, BorderLayout.CENTER);
+            searchPanel.add(searchButton, BorderLayout.SOUTH);
 
-            centralizeItems.add(searchPanel, gbc);
+            centralizeItems.add(searchPanel);
 
             add(centralizeItems);
 
             searchButton.addActionListener(this);
-
+            setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
             setVisible(true);
         }
 
@@ -152,11 +193,13 @@ public class GraphicalUserInterface {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == searchButton) {
                 String searchCriteria = (String) searchBy.getSelectedItem();
-                JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria);
-                // Adicione aqui a lógica de busca conforme o critério selecionado
+                String searchText = searchField.getText();
+                JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria + "\nTermo de busca: " + searchText);
+                // Adicione aqui a lógica de busca conforme o critério selecionado e o texto de busca
             }
         }
     }
+
 
     public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
@@ -174,6 +217,10 @@ public class GraphicalUserInterface {
 
         public ProductInsertionInterface() {
             super("PharmaHub: Inserir produtos");
+            setWindowIcon(this);
+
+            insertButton.setBackground(Color.WHITE);
+            insertButton.setForeground(Color.BLACK);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -187,10 +234,6 @@ public class GraphicalUserInterface {
             registerPanel.add(nameLabel, gbc);
             gbc.gridx = 1;
             registerPanel.add(productName, gbc);
-
-            gbc.gridx = 0;
-            gbc.gridy++;
-            gbc.gridx = 1;
 
             gbc.gridx = 0;
             gbc.gridy++;
@@ -218,9 +261,9 @@ public class GraphicalUserInterface {
             add(centralizeItems);
 
             insertButton.addActionListener(this);
-
+            setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
             setVisible(true);
         }
 
@@ -229,9 +272,9 @@ public class GraphicalUserInterface {
             if (e.getSource() == insertButton) {
                 String name = productName.getText();
                 String price = productPrice.getText();
-                String manufacturerID = productIDManufacturer.getText();
-                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nID do Fabricante: " + manufacturerID);
-                // Adicione aqui a lógica de inserção de produto
+                String manufacturer = productIDManufacturer.getText();
+                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
+                // Adicione aqui a lógica para inserir o produto no banco de dados
             }
         }
     }
@@ -240,7 +283,7 @@ public class GraphicalUserInterface {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
 
-        JLabel registrationField = new JLabel("Preencha os campos para se registrar: ");
+        JLabel registrationField = new JLabel("Informe seus dados para se registrar: ");
         JLabel usernameLabel = new JLabel("Nome de Usuário: ");
         JLabel passwordLabel = new JLabel("Senha: ");
         JLabel confirmPasswordLabel = new JLabel("Confirme a Senha: ");
@@ -252,6 +295,10 @@ public class GraphicalUserInterface {
 
         public RegisterInterface() {
             super("PharmaHub: Registrar");
+            setWindowIcon(this);
+
+            submitButton.setBackground(Color.WHITE);
+            submitButton.setForeground(Color.BLACK);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -292,9 +339,9 @@ public class GraphicalUserInterface {
             centralizeItems.add(registerPanel, gbc);
 
             add(centralizeItems);
-
+            setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
             setVisible(true);
         }
 
@@ -302,17 +349,14 @@ public class GraphicalUserInterface {
             if (passwordField.getText().equals(confirmPasswordField.getText())) {
                 try {
                     if (DatabaseManager.register(usernameField.getText(), passwordField.getText())) {
-                        // mostrar tela depois do registro ou modal escrito "registro com sucesso"
                         new LoginInterface();
-                    }
-                    else {
+                    } else {
                         JOptionPane.showMessageDialog(new JFrame(), "Não foi possível registrar esse usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (SQLException | ClassNotFoundException ex) {
                     throw new RuntimeException(ex);
                 }
-            }
-            else {
+            } else {
                 JOptionPane.showMessageDialog(new JFrame(), "As senhas não coincidem.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -332,6 +376,10 @@ public class GraphicalUserInterface {
 
         public LoginInterface() {
             super("PharmaHub: Login");
+            setWindowIcon(this);
+
+            submitButton.setBackground(Color.WHITE);
+            submitButton.setForeground(Color.BLACK);
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -366,9 +414,9 @@ public class GraphicalUserInterface {
             centralizeItems.add(loginPanel, gbc);
 
             add(centralizeItems);
-
+            setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            pack();
+            setExtendedState(JFrame.MAXIMIZED_BOTH);;
             setVisible(true);
         }
 
@@ -389,6 +437,7 @@ public class GraphicalUserInterface {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
+        new GUI(). new ProductSearchInterface();
         try {
             DatabaseManager.createUserTable();
             DatabaseManager.createManufacturerTable();
@@ -397,6 +446,6 @@ public class GraphicalUserInterface {
             System.out.println("As tabelas já foram criadas!");
             System.out.println(ex.getMessage());
         }
-        SwingUtilities.invokeLater(() -> new GraphicalUserInterface().new InitialInterface());
+        SwingUtilities.invokeLater(() -> new GUI().new InitialInterface());
     }
 }
