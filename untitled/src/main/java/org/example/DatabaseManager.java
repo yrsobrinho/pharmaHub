@@ -164,7 +164,7 @@ public class DatabaseManager {
         return null;
     }
 
-    public static List<Product> searchProductsByManufacturerId(int id) throws SQLException, ClassNotFoundException {
+    public static List<Product> searchProductsByManufacturerId(Integer id) throws SQLException, ClassNotFoundException {
         List<Product> products = new ArrayList<>();
         Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE MANUFACTURER_ID = ?";
@@ -209,6 +209,22 @@ public class DatabaseManager {
         statement.executeUpdate();
         statement.close();
         return true;
+    }
+
+    public static Manufacturer searchManufacturerByName(String name) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String sql = "SELECT * FROM TB_MANUFACTURERS WHERE NAME = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, name);
+        ResultSet rs = statement.executeQuery();
+        if (rs.next()) {
+            int id = rs.getInt("ID");
+            String manufacturerName = rs.getString("NAME");
+            statement.close();
+            return new Manufacturer(id, manufacturerName);
+        }
+        statement.close();
+        return null;
     }
 
     public static void createUserTable() throws SQLException, ClassNotFoundException {

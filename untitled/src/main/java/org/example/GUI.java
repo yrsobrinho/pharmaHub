@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GUI {
 
@@ -195,7 +197,23 @@ public class GUI {
                 String searchCriteria = (String) searchBy.getSelectedItem();
                 String searchText = searchField.getText();
                 JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria + "\nTermo de busca: " + searchText);
-                // Adicione aqui a lógica de busca conforme o critério selecionado e o texto de busca
+                
+                List<Product> products = new ArrayList<>();
+                try {
+                    if (searchCriteria.equals("Nome"))
+                        products = DatabaseManager.searchByProductName(searchText);
+                    else if (searchCriteria.equals("ID do Fabricante"))
+                        products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(searchText));
+                    else if (searchCriteria.equals("Nome do Fabricante"))
+                        products = DatabaseManager.searchProductsByManufacturerName(searchText);
+                    if (products.size() > 0) {
+                        // Colocar logica para mostrar produtos
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -273,8 +291,21 @@ public class GUI {
                 String name = productName.getText();
                 String price = productPrice.getText();
                 String manufacturer = productIDManufacturer.getText();
-                JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
-                // Adicione aqui a lógica para inserir o produto no banco de dados
+                Manufacturer m = null;
+                try {
+                    m = DatabaseManager.searchManufacturerByName(manufacturer);
+                    if (m != null) {
+                        Product p = new Product(null, name, Double.parseDouble(price), m);
+                        if (DatabaseManager.insertProduct(p))
+                            JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
+                        else
+                            JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

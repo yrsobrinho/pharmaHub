@@ -1,12 +1,12 @@
 package org.example;
 
 public class Product {
-    private int id;
+    private Integer id;
     private String name;
     private Double price;
     private Manufacturer manufacturer;
 
-    public Product(int id, String name, Double price, Manufacturer manufacturer) {
+    public Product(Integer id, String name, Double price, Manufacturer manufacturer) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -21,11 +21,11 @@ public class Product {
         this.manufacturer = manufacturer;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
