@@ -8,8 +8,8 @@ public class DatabaseManager {
 
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.hsql.jdbcDriver");
-        String url = "jdbc:HypersonicSQL:mem:mymemdb";
-        return DriverManager.getConnection(url, "SA", "");
+        String url = "jdbc:HypersonicSQL:localhost";
+        return DriverManager.getConnection(url, "sa", "");
     }
 
     public static boolean register(String username, String password) throws SQLException, ClassNotFoundException {
@@ -23,6 +23,7 @@ public class DatabaseManager {
 
         if (rs.next()) {
             statement.close();
+            connection.close();
             return false;
         }
         else {
@@ -31,6 +32,7 @@ public class DatabaseManager {
             statement.setString(1, username);
             statement.setString(2, password);
             statement.executeUpdate();
+            connection.close();
             return true;
         }
     }
@@ -46,9 +48,11 @@ public class DatabaseManager {
             String usr = rs.getString("USERNAME");
             String pwd = rs.getString("PASSWORD");
             statement.close();
+            connection.close();
             return usr.equals(username) && pwd.equals(password);
         }
         statement.close();
+        connection.close();
         return false;
     }
 
@@ -65,8 +69,10 @@ public class DatabaseManager {
         resultSet.next();
         checkProduct.close();
 
-        if (!resultSet.getString("NAME").isEmpty())
+        if (!resultSet.getString("NAME").isEmpty()) {
+            connection.close();
             return false;
+        }
 
         /*
         if (searchManufacturerById(product.getManufacturer().getId()) != null)
@@ -78,7 +84,7 @@ public class DatabaseManager {
         statement.setDouble(3, product.getPrice());
         int affectedRows = statement.executeUpdate();
         statement.close();
-
+        connection.close();
         return affectedRows != 0;
     }
 
@@ -99,6 +105,7 @@ public class DatabaseManager {
                 products.add(new Product(id, productName, price, m));
         }
         statement.close();
+        connection.close();
         return products;
     }
 
@@ -108,8 +115,11 @@ public class DatabaseManager {
         PreparedStatement manufacturerStatement = connection.prepareStatement(manufacturer);
         manufacturerStatement.setInt(1, id);
         ResultSet rsManufacturer = manufacturerStatement.executeQuery();
-        if (rsManufacturer.next())
+        if (rsManufacturer.next()) {
+            connection.close();
             return new Manufacturer(rsManufacturer.getInt("ID"), rsManufacturer.getString("NAME"));
+        }
+        connection.close();
         return null;
     }
 
@@ -126,9 +136,10 @@ public class DatabaseManager {
             m = new Manufacturer(id, manufacturerName);
             manufacturerStatement.close();
         }
-        else
+        else {
+            connection.close();
             return null;
-
+        }
         List<Product> products = new ArrayList<>();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE NAME LIKE ?";
         PreparedStatement statement = connection.prepareStatement(sql);
@@ -142,6 +153,7 @@ public class DatabaseManager {
             products.add(new Product(id, productName, price, m));
         }
         statement.close();
+        connection.close();
         return products;
     }
 
@@ -158,9 +170,11 @@ public class DatabaseManager {
             Double productPrice = rs.getDouble("PRICE");
             Manufacturer m = DatabaseManager.searchManufacturerById(rs.getInt("MANUFACTURER_ID"));
             statement.close();
+            connection.close();
             return new Product(productId, productName, productPrice, m);
         }
         statement.close();
+        connection.close();
         return null;
     }
 
@@ -179,6 +193,7 @@ public class DatabaseManager {
             products.add(new Product(productId, productName,productPrice, m));
         }
         statement.close();
+        connection.close();
         return products;
     }
 
@@ -189,6 +204,7 @@ public class DatabaseManager {
         statement.setInt(1, id);
         int affectedRows = statement.executeUpdate();
         statement.close();
+        connection.close();
         return affectedRows != 0;
     }
 
@@ -200,6 +216,7 @@ public class DatabaseManager {
         ResultSet rs = statement.executeQuery();
         if (rs.next()) {
             statement.close();
+            connection.close();
             return false;
         }
 
@@ -208,6 +225,7 @@ public class DatabaseManager {
         statement.setString(1, manufacturer.getName());
         statement.executeUpdate();
         statement.close();
+        connection.close();
         return true;
     }
 
@@ -221,9 +239,11 @@ public class DatabaseManager {
             int id = rs.getInt("ID");
             String manufacturerName = rs.getString("NAME");
             statement.close();
+            connection.close();
             return new Manufacturer(id, manufacturerName);
         }
         statement.close();
+        connection.close();
         return null;
     }
 
@@ -233,6 +253,7 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
         statement.execute(userTableQuery);
         statement.close();
+        connection.close();
     };
 
     public static void createManufacturerTable() throws SQLException, ClassNotFoundException {
@@ -241,6 +262,7 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
         statement.execute(manufacturerTableQuery);
         statement.close();
+        connection.close();
     };
 
     public static void createProductTable() throws SQLException, ClassNotFoundException {
@@ -249,5 +271,6 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
         statement.execute(productTableQuery);
         statement.close();
+        connection.close();
     };
 }

@@ -187,7 +187,7 @@ public class GUI {
             setWindowIcon(this);
 
             removeBy.addItem("Nome");
-            removeBy.addItem("ID do Fabricante");
+            removeBy.addItem("ID");
 
             removeButton.setBackground(Color.WHITE);
             removeButton.setForeground(Color.BLACK);
@@ -317,7 +317,23 @@ public class GUI {
                 String searchCriteria = (String) searchBy.getSelectedItem();
                 String searchText = searchField.getText();
                 JOptionPane.showMessageDialog(this, "Consultar por: " + searchCriteria + "\nTermo de consulta: " + searchText);
-                // Realize a consulta ao banco de dados aqui com base nos critérios selecionados e texto fornecido
+
+                List<Product> products = new ArrayList<>();
+                try {
+                    if (searchCriteria.equals("Nome"))
+                        products = DatabaseManager.searchByProductName(searchText);
+                    else if (searchCriteria.equals("ID do Fabricante"))
+                        products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(searchText));
+                    else if (searchCriteria.equals("Nome do Fabricante"))
+                        products = DatabaseManager.searchProductsByManufacturerName(searchText);
+                    if (products.size() > 0) {
+                        // Colocar logica para mostrar produtos
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -327,8 +343,10 @@ public class GUI {
         JPanel insertPanel = new JPanel(new BorderLayout(10, 10));
         JLabel productNameLabel = new JLabel("Nome do Produto: ");
         JTextField productNameField = new JTextField(20);
-        JLabel productManufacturerIdLabel = new JLabel("ID do Fabricante: ");
-        JTextField productManufacturerIdField = new JTextField(20);
+        JLabel productManufacturerNameLabel = new JLabel("Nome do Fabricante: ");
+        JTextField productManufacturerNameField = new JTextField(20);
+        JLabel productPriceLabel = new JLabel("Preço: ");
+        JTextField productPriceField = new JTextField(20);
         JButton insertButton = new JButton("Inserir");
         JButton backButton = new JButton("Voltar");
 
@@ -344,13 +362,16 @@ public class GUI {
 
 
             productNameField.setPreferredSize(new Dimension(300, 30));
-            productManufacturerIdField.setPreferredSize(new Dimension(300, 30));
+            productManufacturerNameField.setPreferredSize(new Dimension(300, 30));
+            productPriceField.setPreferredSize(new Dimension(300, 30));
 
             JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 10));
             inputPanel.add(productNameLabel);
             inputPanel.add(productNameField);
-            inputPanel.add(productManufacturerIdLabel);
-            inputPanel.add(productManufacturerIdField);
+            inputPanel.add(productManufacturerNameLabel);
+            inputPanel.add(productManufacturerNameField);
+            inputPanel.add(productPriceLabel);
+            inputPanel.add(productPriceField);
 
             insertPanel.add(inputPanel, BorderLayout.CENTER);
             insertPanel.add(insertButton, BorderLayout.SOUTH);
@@ -379,9 +400,28 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == insertButton) {
                 String productName = productNameField.getText();
-                String productManufacturerId = productManufacturerIdField.getText();
-                JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nID do Fabricante: " + productManufacturerId);
-                // Realize a inserção no banco de dados aqui com os dados fornecidos
+                String productManufacturerName = productManufacturerNameField.getText();
+                Double productPrice = Double.parseDouble(productPriceField.getText());
+                JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nID do Fabricante: " + productManufacturerName);
+
+                Manufacturer m;
+                try {
+                    m = DatabaseManager.searchManufacturerByName(productManufacturerName);
+                    if (m != null) {
+                        Product p = new Product(null, productName, productPrice, m);
+                        if (DatabaseManager.insertProduct(p)) {
+                            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
+                        }
+                        else
+                            JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto.");
+                    }
+                    else
+                        JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto.");
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -581,6 +621,6 @@ public class GUI {
             System.out.println("As tabelas já foram criadas!");
             System.out.println(ex.getMessage());
         }
-        SwingUtilities.invokeLater(() -> new GUI().new InitialInterface());
+        new GUI().new InitialInterface();
     }
 }
