@@ -171,8 +171,7 @@ public class GUI {
         }
     }
 
-    public class ProductRemoveInterface extends JFrame {
-        // implements ActionListener
+    public class ProductRemoveInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel removePanel = new JPanel(new BorderLayout(10, 10));
         JLabel removeFieldLabel = new JLabel("Remover por: ");
@@ -214,7 +213,7 @@ public class GUI {
             bottomPanel.add(backButton);
             add(bottomPanel, BorderLayout.SOUTH);
 
-            //removeButton.addActionListener(this);
+            removeButton.addActionListener(this);
             backButton.addActionListener(e -> {
                 new GeneralInterface();
                 dispose();
@@ -226,7 +225,6 @@ public class GUI {
             setVisible(true);
         }
 
-        /*@Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == removeButton) {
                 String removeCriteria = (String) removeBy.getSelectedItem();
@@ -241,7 +239,7 @@ public class GUI {
                         products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(removeText));
                     if (products.size() > 0) {
                         // Assuming there is a method to remove product in DatabaseManager
-                        if (DatabaseManager.removeProduct(products.get(0).getId())) {
+                        if (DatabaseManager.deleteProductById(products.get(0).getId())) {
                             JOptionPane.showMessageDialog(this, "Produto removido com sucesso");
                         } else {
                             JOptionPane.showMessageDialog(this, "Erro ao remover o produto");
@@ -255,7 +253,7 @@ public class GUI {
                     throw new RuntimeException(ex);
                 }
             }
-        }*/
+        }
     }
 
     public class ProductSearchInterface extends JFrame implements ActionListener {
