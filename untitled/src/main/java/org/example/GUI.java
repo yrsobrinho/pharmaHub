@@ -197,7 +197,7 @@ public class GUI {
                 String searchCriteria = (String) searchBy.getSelectedItem();
                 String searchText = searchField.getText();
                 JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria + "\nTermo de busca: " + searchText);
-                
+
                 List<Product> products = new ArrayList<>();
                 try {
                     if (searchCriteria.equals("Nome"))
@@ -209,6 +209,8 @@ public class GUI {
                     if (products.size() > 0) {
                         // Colocar logica para mostrar produtos
                     }
+                    else
+                        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -299,7 +301,7 @@ public class GUI {
                         if (DatabaseManager.insertProduct(p))
                             JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
                         else
-                            JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
+                            JOptionPane.showMessageDialog(this, "Erro ao inserir produto");
                     }
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
