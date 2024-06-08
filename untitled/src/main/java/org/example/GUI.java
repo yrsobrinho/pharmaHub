@@ -31,7 +31,6 @@ public class GUI {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            // Tenta carregar e redimensionar o ícone da imagem
             ImageIcon logoIcon = null;
             try {
                 BufferedImage logoImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
@@ -68,6 +67,7 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new LoginInterface();
+                    dispose();
                 }
             });
 
@@ -75,12 +75,13 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new RegisterInterface();
+                    dispose();
                 }
             });
 
             add(mainPanel, BorderLayout.CENTER);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setLocationRelativeTo(null);
             setVisible(true);
         }
@@ -97,6 +98,7 @@ public class GUI {
 
             JButton productSearchButton = new JButton("Consultar Produtos");
             JButton productInsertButton = new JButton("Inserir Produtos");
+            JButton productRemoveButton = new JButton("Remover Produtos");
             JButton exitButton = new JButton("Sair");
 
             Dimension buttonSize = new Dimension(200, 50);
@@ -108,6 +110,10 @@ public class GUI {
             productInsertButton.setBackground(Color.WHITE);
             productInsertButton.setForeground(Color.BLACK);
 
+            productRemoveButton.setPreferredSize(buttonSize);
+            productRemoveButton.setBackground(Color.WHITE);
+            productRemoveButton.setForeground(Color.BLACK);
+
             exitButton.setPreferredSize(buttonSize);
             exitButton.setBackground(Color.WHITE);
             exitButton.setForeground(Color.BLACK);
@@ -116,6 +122,7 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new ProductSearchInterface();
+                    dispose();
                 }
             });
 
@@ -123,6 +130,15 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     new ProductInsertionInterface();
+                    dispose();
+                }
+            });
+
+            productRemoveButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ProductRemoveInterface();
+                    dispose();
                 }
             });
 
@@ -142,14 +158,104 @@ public class GUI {
             buttonPanel.add(productInsertButton, gbc);
 
             gbc.gridy++;
+            buttonPanel.add(productRemoveButton, gbc);
+
+            gbc.gridy++;
             buttonPanel.add(exitButton, gbc);
 
             add(buttonPanel, BorderLayout.CENTER);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
         }
+    }
+
+    public class ProductRemoveInterface extends JFrame {
+        // implements ActionListener
+        JPanel centralizeItems = new JPanel(new GridBagLayout());
+        JPanel removePanel = new JPanel(new BorderLayout(10, 10));
+        JLabel removeFieldLabel = new JLabel("Remover por: ");
+        JComboBox<String> removeBy = new JComboBox<>();
+        JTextField removeField = new JTextField(20);
+        JButton removeButton = new JButton("Remover");
+        JButton backButton = new JButton("Voltar");
+
+
+        public ProductRemoveInterface() {
+            super("PharmaHub: Remover produtos");
+            setWindowIcon(this);
+
+            removeBy.addItem("Nome");
+            removeBy.addItem("ID do Fabricante");
+
+            removeButton.setBackground(Color.WHITE);
+            removeButton.setForeground(Color.BLACK);
+
+            backButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
+
+
+            removeField.setPreferredSize(new Dimension(300, 30));
+
+            JPanel comboBoxPanel = new JPanel(new BorderLayout(5, 5));
+            comboBoxPanel.add(removeFieldLabel, BorderLayout.WEST);
+            comboBoxPanel.add(removeBy, BorderLayout.CENTER);
+
+            removePanel.add(comboBoxPanel, BorderLayout.NORTH);
+            removePanel.add(removeField, BorderLayout.CENTER);
+            removePanel.add(removeButton, BorderLayout.SOUTH);
+
+            centralizeItems.add(removePanel);
+
+            add(centralizeItems, BorderLayout.CENTER);
+
+            JPanel bottomPanel = new JPanel();
+            bottomPanel.add(backButton);
+            add(bottomPanel, BorderLayout.SOUTH);
+
+            //removeButton.addActionListener(this);
+            backButton.addActionListener(e -> {
+                new GeneralInterface();
+                dispose();
+            });
+
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            setVisible(true);
+        }
+
+        /*@Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == removeButton) {
+                String removeCriteria = (String) removeBy.getSelectedItem();
+                String removeText = removeField.getText();
+                JOptionPane.showMessageDialog(this, "Remover por: " + removeCriteria + "\nTermo de remoção: " + removeText);
+
+                List<Product> products = new ArrayList<>();
+                try {
+                    if (removeCriteria.equals("Nome"))
+                        products = DatabaseManager.searchByProductName(removeText);
+                    else if (removeCriteria.equals("ID do Fabricante"))
+                        products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(removeText));
+                    if (products.size() > 0) {
+                        // Assuming there is a method to remove product in DatabaseManager
+                        if (DatabaseManager.removeProduct(products.get(0).getId())) {
+                            JOptionPane.showMessageDialog(this, "Produto removido com sucesso");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Erro ao remover o produto");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
+                    }
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }*/
     }
 
     public class ProductSearchInterface extends JFrame implements ActionListener {
@@ -159,6 +265,7 @@ public class GUI {
         JComboBox<String> searchBy = new JComboBox<>();
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Enviar");
+        JButton backButton = new JButton("Voltar");
 
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
@@ -169,6 +276,10 @@ public class GUI {
 
             searchButton.setBackground(Color.WHITE);
             searchButton.setForeground(Color.BLACK);
+
+            backButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
+
 
             searchField.setPreferredSize(new Dimension(300, 30));
 
@@ -182,12 +293,21 @@ public class GUI {
 
             centralizeItems.add(searchPanel);
 
-            add(centralizeItems);
+            add(centralizeItems, BorderLayout.CENTER);
+
+            JPanel bottomPanel = new JPanel();
+            bottomPanel.add(backButton);
+            add(bottomPanel, BorderLayout.SOUTH);
 
             searchButton.addActionListener(this);
+            backButton.addActionListener(e -> {
+                new GeneralInterface();
+                dispose();
+            });
+
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
         }
 
@@ -196,44 +316,21 @@ public class GUI {
             if (e.getSource() == searchButton) {
                 String searchCriteria = (String) searchBy.getSelectedItem();
                 String searchText = searchField.getText();
-                JOptionPane.showMessageDialog(this, "Buscar por: " + searchCriteria + "\nTermo de busca: " + searchText);
-
-                List<Product> products = new ArrayList<>();
-                try {
-                    if (searchCriteria.equals("Nome"))
-                        products = DatabaseManager.searchByProductName(searchText);
-                    else if (searchCriteria.equals("ID do Fabricante"))
-                        products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(searchText));
-                    else if (searchCriteria.equals("Nome do Fabricante"))
-                        products = DatabaseManager.searchProductsByManufacturerName(searchText);
-                    if (products.size() > 0) {
-                        // Colocar logica para mostrar produtos
-                    }
-                    else
-                        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
+                JOptionPane.showMessageDialog(this, "Consultar por: " + searchCriteria + "\nTermo de consulta: " + searchText);
+                // Realize a consulta ao banco de dados aqui com base nos critérios selecionados e texto fornecido
             }
         }
     }
 
-
     public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
-        JPanel registerPanel = new JPanel(new GridBagLayout());
-
-        JLabel registrationField = new JLabel("Identifique o produto a ser adicionado: ");
-        JLabel nameLabel = new JLabel("Nome: ");
-        JLabel priceLabel = new JLabel("Preço: ");
-        JLabel manufacturerIDLabel = new JLabel("ID do Fabricante: ");
-
-        JTextField productName = new JTextField(20);
-        JTextField productIDManufacturer = new JTextField(20);
-        JTextField productPrice = new JTextField(20);
-        JButton insertButton = new JButton("Enviar");
+        JPanel insertPanel = new JPanel(new BorderLayout(10, 10));
+        JLabel productNameLabel = new JLabel("Nome do Produto: ");
+        JTextField productNameField = new JTextField(20);
+        JLabel productManufacturerIdLabel = new JLabel("ID do Fabricante: ");
+        JTextField productManufacturerIdField = new JTextField(20);
+        JButton insertButton = new JButton("Inserir");
+        JButton backButton = new JButton("Voltar");
 
         public ProductInsertionInterface() {
             super("PharmaHub: Inserir produtos");
@@ -242,72 +339,49 @@ public class GUI {
             insertButton.setBackground(Color.WHITE);
             insertButton.setForeground(Color.BLACK);
 
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
+            backButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.anchor = GridBagConstraints.WEST;
-            registerPanel.add(registrationField, gbc);
 
-            gbc.gridy++;
-            registerPanel.add(nameLabel, gbc);
-            gbc.gridx = 1;
-            registerPanel.add(productName, gbc);
+            productNameField.setPreferredSize(new Dimension(300, 30));
+            productManufacturerIdField.setPreferredSize(new Dimension(300, 30));
 
-            gbc.gridx = 0;
-            gbc.gridy++;
-            registerPanel.add(priceLabel, gbc);
-            gbc.gridx = 1;
-            registerPanel.add(productPrice, gbc);
+            JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            inputPanel.add(productNameLabel);
+            inputPanel.add(productNameField);
+            inputPanel.add(productManufacturerIdLabel);
+            inputPanel.add(productManufacturerIdField);
 
-            gbc.gridx = 0;
-            gbc.gridy++;
-            registerPanel.add(manufacturerIDLabel, gbc);
-            gbc.gridx = 1;
-            registerPanel.add(productIDManufacturer, gbc);
+            insertPanel.add(inputPanel, BorderLayout.CENTER);
+            insertPanel.add(insertButton, BorderLayout.SOUTH);
 
-            gbc.gridy++;
-            gbc.gridx = 0;
-            gbc.gridwidth = 2;
-            registerPanel.add(insertButton, gbc);
+            centralizeItems.add(insertPanel);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            centralizeItems.add(registerPanel, gbc);
+            add(centralizeItems, BorderLayout.CENTER);
 
-            add(centralizeItems);
+            JPanel bottomPanel = new JPanel();
+            bottomPanel.add(backButton);
+            add(bottomPanel, BorderLayout.SOUTH);
 
             insertButton.addActionListener(this);
+            backButton.addActionListener(e -> {
+                new GeneralInterface();
+                dispose();
+            });
+
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == insertButton) {
-                String name = productName.getText();
-                String price = productPrice.getText();
-                String manufacturer = productIDManufacturer.getText();
-                Manufacturer m = null;
-                try {
-                    m = DatabaseManager.searchManufacturerByName(manufacturer);
-                    if (m != null) {
-                        Product p = new Product(null, name, Double.parseDouble(price), m);
-                        if (DatabaseManager.insertProduct(p))
-                            JOptionPane.showMessageDialog(this, "Produto inserido:\nNome: " + name + "\nPreço: " + price + "\nFabricante: " + manufacturer);
-                        else
-                            JOptionPane.showMessageDialog(this, "Erro ao inserir produto");
-                    }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
-                }
+                String productName = productNameField.getText();
+                String productManufacturerId = productManufacturerIdField.getText();
+                JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nID do Fabricante: " + productManufacturerId);
+                // Realize a inserção no banco de dados aqui com os dados fornecidos
             }
         }
     }
@@ -325,6 +399,7 @@ public class GUI {
         JPasswordField passwordField = new JPasswordField(20);
         JPasswordField confirmPasswordField = new JPasswordField(20);
         JButton submitButton = new JButton("Enviar");
+        JButton backButton = new JButton("Voltar");
 
         public RegisterInterface() {
             super("PharmaHub: Registrar");
@@ -332,6 +407,10 @@ public class GUI {
 
             submitButton.setBackground(Color.WHITE);
             submitButton.setForeground(Color.BLACK);
+
+            backButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
+
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -365,6 +444,9 @@ public class GUI {
             gbc.anchor = GridBagConstraints.CENTER;
             registerPanel.add(submitButton, gbc);
 
+            gbc.gridy++;
+            registerPanel.add(backButton, gbc);
+
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
@@ -374,15 +456,22 @@ public class GUI {
             add(centralizeItems);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
+
+            backButton.addActionListener(e -> {
+                new InitialInterface();
+                dispose();
+            });
         }
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (passwordField.getText().equals(confirmPasswordField.getText())) {
                 try {
                     if (DatabaseManager.register(usernameField.getText(), passwordField.getText())) {
                         new LoginInterface();
+                        dispose();
                     } else {
                         JOptionPane.showMessageDialog(new JFrame(), "Não foi possível registrar esse usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
                     }
@@ -406,6 +495,7 @@ public class GUI {
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
         JButton submitButton = new JButton("Enviar");
+        JButton backButton = new JButton("Voltar");
 
         public LoginInterface() {
             super("PharmaHub: Login");
@@ -413,6 +503,10 @@ public class GUI {
 
             submitButton.setBackground(Color.WHITE);
             submitButton.setForeground(Color.BLACK);
+
+            backButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
+
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -440,6 +534,9 @@ public class GUI {
             gbc.anchor = GridBagConstraints.CENTER;
             loginPanel.add(submitButton, gbc);
 
+            gbc.gridy++;
+            loginPanel.add(backButton, gbc);
+
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
@@ -449,8 +546,13 @@ public class GUI {
             add(centralizeItems);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);;
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
+
+            backButton.addActionListener(e -> {
+                new InitialInterface();
+                dispose();
+            });
         }
 
         @Override
@@ -463,6 +565,7 @@ public class GUI {
             }
             if (authenticated) {
                 new GeneralInterface();
+                dispose();
             } else {
                 JOptionPane.showMessageDialog(new JFrame(), "Credenciais incorretas.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -470,12 +573,11 @@ public class GUI {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        new GUI(). new ProductSearchInterface();
         try {
             DatabaseManager.createUserTable();
             DatabaseManager.createManufacturerTable();
             DatabaseManager.createProductTable();
-        } catch(SQLException ex) {
+        } catch (SQLException ex) {
             System.out.println("As tabelas já foram criadas!");
             System.out.println(ex.getMessage());
         }
