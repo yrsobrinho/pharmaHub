@@ -11,10 +11,6 @@ target/
 *.iws
 *.iml
 *.ipr
-*.backup
-*.data
-*.properties
-*.script
 
 ### Eclipse ###
 .apt_generated
