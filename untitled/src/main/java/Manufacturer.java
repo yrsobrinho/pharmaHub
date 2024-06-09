@@ -1,5 +1,3 @@
-package org.example;
-
 public class Manufacturer {
     private int id;
     private String name;

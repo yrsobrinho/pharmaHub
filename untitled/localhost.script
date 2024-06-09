@@ -69,4 +69,3 @@ CREATE ALIAS RAND FOR "java.lang.Math.random"
 CREATE ALIAS LENGTH FOR "org.hsql.Library.length"
 CREATE ALIAS ROUND FOR "org.hsql.Library.round"
 CREATE ALIAS REPLACE FOR "org.hsql.Library.replace"
-INSERT INTO TB_USERS VALUES(NULL,'yasmi','123')
