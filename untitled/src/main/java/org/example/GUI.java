@@ -11,8 +11,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe responsável por mostrar e gerenciar as interfaces gráficas
 public class GUI {
 
+    // Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
     private void setWindowIcon(JFrame frame) {
         try {
             BufferedImage iconImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
@@ -22,6 +24,7 @@ public class GUI {
         }
     }
 
+    // Interface inicial do programa, com botões de login e registro
     public class InitialInterface extends JFrame {
         public InitialInterface() {
             super("PharmaHub: Início");
@@ -63,6 +66,7 @@ public class GUI {
             gbc.gridx = 1;
             mainPanel.add(registerButton, gbc);
 
+            // Abre interface de login de usuário
             loginButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -71,6 +75,7 @@ public class GUI {
                 }
             });
 
+            // Abre interface de registro de usuário
             registerButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -87,6 +92,7 @@ public class GUI {
         }
     }
 
+    // Interface geral, com opções de consulta, inserção e remoção de produtos
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
@@ -118,6 +124,7 @@ public class GUI {
             exitButton.setBackground(Color.WHITE);
             exitButton.setForeground(Color.BLACK);
 
+            // Abre a interface de consulta de produtos
             productSearchButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -126,6 +133,7 @@ public class GUI {
                 }
             });
 
+            // Abre a interface de inserção de produtos
             productInsertButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -134,6 +142,7 @@ public class GUI {
                 }
             });
 
+            // Abre a interface de remoção de produtos
             productRemoveButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -171,6 +180,7 @@ public class GUI {
         }
     }
 
+    // Interface de remoção de produtos
     public class ProductRemoveInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel removePanel = new JPanel(new BorderLayout(10, 10));
@@ -225,6 +235,7 @@ public class GUI {
             setVisible(true);
         }
 
+        // Remove um produto baseado no ID
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == removeButton) {
                 String removeCriteria = (String) removeBy.getSelectedItem();
@@ -256,6 +267,7 @@ public class GUI {
         }
     }
 
+    // Interface para consulta de produtos
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
@@ -309,6 +321,7 @@ public class GUI {
             setVisible(true);
         }
 
+        // Invoca funções de busca de produto baseado em um critério selecionado pelo usuário
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == searchButton) {
@@ -336,6 +349,7 @@ public class GUI {
         }
     }
 
+    // Interface para inserção de produtos
     public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel insertPanel = new JPanel(new BorderLayout(10, 10));
@@ -394,6 +408,7 @@ public class GUI {
             setVisible(true);
         }
 
+        // Evento para inserir um novo produto, checa se o fabricante já existe
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == insertButton) {
@@ -424,6 +439,7 @@ public class GUI {
         }
     }
 
+    // Interface de registro de usuários
     public class RegisterInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel registerPanel = new JPanel(new GridBagLayout());
@@ -503,6 +519,7 @@ public class GUI {
             });
         }
 
+        // Realiza o registro de um usuário
         @Override
         public void actionPerformed(ActionEvent e) {
             if (passwordField.getText().equals(confirmPasswordField.getText())) {
@@ -522,6 +539,7 @@ public class GUI {
         }
     }
 
+    // Interface para login do usuário
     public class LoginInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel loginPanel = new JPanel(new GridBagLayout());
@@ -593,6 +611,7 @@ public class GUI {
             });
         }
 
+        // Tenta realizar a autenticação do usuário. Caso não seja possível, mostra uma modal de erro
         @Override
         public void actionPerformed(ActionEvent e) {
             boolean authenticated = false;
@@ -610,6 +629,7 @@ public class GUI {
         }
     }
 
+    // Função principal do projeto, cria as tabelas e inicializa a interface gráfica principal
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         try {
             DatabaseManager.createUserTable();

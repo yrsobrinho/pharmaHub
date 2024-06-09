@@ -4,14 +4,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe que realiza todas as operações com o banco de dados
 public class DatabaseManager {
 
+    // Cria conexão com banco de dados, carregando driver
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.hsql.jdbcDriver");
         String url = "jdbc:HypersonicSQL:localhost";
         return DriverManager.getConnection(url, "sa", "");
     }
 
+    // Registra usuários no banco de dados
     public static boolean register(String username, String password) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         // Checando se usuário já existe no banco de dados
@@ -37,6 +40,7 @@ public class DatabaseManager {
         }
     }
 
+    // Autentica usuários, checando se existem e se a senha inserida coincide com a senha armazenada
     public static boolean login(String username, String password) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String checkUser = "SELECT * FROM TB_USERS WHERE USERNAME = ?";
@@ -56,6 +60,7 @@ public class DatabaseManager {
         return false;
     }
 
+    // Registra produto no banco de dados, checando se não há um registro com o mesmo nome
     public static boolean insertProduct(Product product) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "INSERT INTO TB_PRODUCTS(NAME, MANUFACTURER_ID, PRICE) VALUES (?, ?, ?)";
@@ -88,6 +93,7 @@ public class DatabaseManager {
         return affectedRows != 0;
     }
 
+    // Busca produto por nome
     public static List<Product> searchByProductName(String name) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         List<Product> products = new ArrayList<>();
@@ -109,6 +115,7 @@ public class DatabaseManager {
         return products;
     }
 
+    // Busca fabricante por ID
     public static Manufacturer searchManufacturerById(int id) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String manufacturer = "SELECT * FROM TB_MANUFACTURERS WHERE ID = ?";
@@ -123,6 +130,7 @@ public class DatabaseManager {
         return null;
     }
 
+    // Busca produtos pelo nome do fabricante
     public static List<Product> searchProductsByManufacturerName(String name) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String manufacturerQuery = "SELECT * FROM TB_MANUFACTURERS WHERE NAME LIKE ?";
@@ -157,6 +165,7 @@ public class DatabaseManager {
         return products;
     }
 
+    // Busca produto pelo ID
     public static Product searchByProductId(int id) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_PRODUCTS WHERE ID = ?";
@@ -178,6 +187,7 @@ public class DatabaseManager {
         return null;
     }
 
+    // Busca produto pelo ID do fabricante
     public static List<Product> searchProductsByManufacturerId(Integer id) throws SQLException, ClassNotFoundException {
         List<Product> products = new ArrayList<>();
         Connection connection = DatabaseManager.getConnection();
@@ -197,6 +207,7 @@ public class DatabaseManager {
         return products;
     }
 
+    // Deleta produto pelo ID
     public static boolean deleteProductById(int id) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "DELETE FROM TB_PRODUCTS WHERE ID = ?";
@@ -208,6 +219,7 @@ public class DatabaseManager {
         return affectedRows != 0;
     }
 
+    // Registra fabricante
     public static boolean insertManufacturer(Manufacturer manufacturer) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String checkIfExists =  "SELECT * FROM TB_MANUFACTURERS WHERE NAME = ?";
@@ -229,6 +241,7 @@ public class DatabaseManager {
         return true;
     }
 
+    // Busca fabricante pelo nome
     public static Manufacturer searchManufacturerByName(String name) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "SELECT * FROM TB_MANUFACTURERS WHERE NAME = ?";
@@ -247,6 +260,7 @@ public class DatabaseManager {
         return null;
     }
 
+    // Cria tabela usuários no banco de dados
     public static void createUserTable() throws SQLException, ClassNotFoundException {
         String userTableQuery = "CREATE TABLE TB_USERS (id INT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
         Connection connection = DatabaseManager.getConnection();
@@ -256,6 +270,7 @@ public class DatabaseManager {
         connection.close();
     };
 
+    // Cria tabela de fabricantes no banco de dados
     public static void createManufacturerTable() throws SQLException, ClassNotFoundException {
         String manufacturerTableQuery = "CREATE TABLE TB_MANUFACTURERS (id INT PRIMARY KEY, name VARCHAR(255))";
         Connection connection = DatabaseManager.getConnection();
@@ -265,6 +280,7 @@ public class DatabaseManager {
         connection.close();
     };
 
+    // Cria tabela de produtos no banco de dados
     public static void createProductTable() throws SQLException, ClassNotFoundException {
         String productTableQuery = "CREATE TABLE TB_PRODUCTS (id INT PRIMARY KEY, name VARCHAR(255), price DOUBLE PRECISION, manufacturer_id INT, FOREIGN KEY (manufacturer_id) REFERENCES TB_MANUFACTURERS(id))";
         Connection connection = DatabaseManager.getConnection();
