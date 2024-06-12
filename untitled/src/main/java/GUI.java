@@ -10,9 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Classe responsável por mostrar e gerenciar as interfaces gráficas
+// Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
+// Interface inicial do programa, com botões de login e registro
+// Interface geral, com opções de consulta, inserção e remoção de produtos
+// Interface de remoção de produtos
+// Remove um produto baseado no ID
+// Interface para consulta de produtos
+// Invoca funções de busca de produto baseado em um critério selecionado pelo usuário
+// Interface para inserção de produtos
+// Evento para inserir um novo produto, checa se o fabricante já existe
+// Interface de registro de usuários
 public class GUI {
 
-    // Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
     private void setWindowIcon(JFrame frame) {
         try {
             BufferedImage iconImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
@@ -22,7 +31,6 @@ public class GUI {
         }
     }
 
-    // Interface inicial do programa, com botões de login e registro
     public class InitialInterface extends JFrame {
         public InitialInterface() {
             super("PharmaHub: Início");
@@ -64,6 +72,16 @@ public class GUI {
             gbc.gridx = 1;
             mainPanel.add(registerButton, gbc);
 
+            // Adiciona o botão Sair
+            JButton exitButton = new JButton("Sair");
+            exitButton.setPreferredSize(new Dimension(200, 50));
+            exitButton.setBackground(Color.WHITE);
+            exitButton.setForeground(Color.BLACK);
+            gbc.gridx = 0;
+            gbc.gridy = 2;
+            gbc.gridwidth = 2;
+            mainPanel.add(exitButton, gbc);
+
             // Abre interface de login de usuário
             loginButton.addActionListener(new ActionListener() {
                 @Override
@@ -82,6 +100,14 @@ public class GUI {
                 }
             });
 
+            // Fecha a aplicação
+            exitButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.exit(0);
+                }
+            });
+
             add(mainPanel, BorderLayout.CENTER);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -90,7 +116,6 @@ public class GUI {
         }
     }
 
-    // Interface geral, com opções de consulta, inserção e remoção de produtos
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
@@ -103,6 +128,7 @@ public class GUI {
             JButton productSearchButton = new JButton("Consultar Produtos");
             JButton productInsertButton = new JButton("Inserir Produtos");
             JButton productRemoveButton = new JButton("Remover Produtos");
+            JButton addManufacturerButton = new JButton("Adicionar Fabricante");
             JButton exitButton = new JButton("Sair");
 
             Dimension buttonSize = new Dimension(200, 50);
@@ -117,6 +143,10 @@ public class GUI {
             productRemoveButton.setPreferredSize(buttonSize);
             productRemoveButton.setBackground(Color.WHITE);
             productRemoveButton.setForeground(Color.BLACK);
+
+            addManufacturerButton.setPreferredSize(buttonSize);
+            addManufacturerButton.setBackground(Color.WHITE);
+            addManufacturerButton.setForeground(Color.BLACK);
 
             exitButton.setPreferredSize(buttonSize);
             exitButton.setBackground(Color.WHITE);
@@ -149,10 +179,21 @@ public class GUI {
                 }
             });
 
+            // Abre a interface de adição de fabricantes
+            addManufacturerButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    new ManufacturerInsertionInterface();
+                    dispose();
+                }
+            });
+
+            // Desconecta o usuário e volta à interface inicial de escolha entre registro e login
             exitButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
+                    new InitialInterface();
+                    dispose();
                 }
             });
 
@@ -168,6 +209,9 @@ public class GUI {
             buttonPanel.add(productRemoveButton, gbc);
 
             gbc.gridy++;
+            buttonPanel.add(addManufacturerButton, gbc);
+
+            gbc.gridy++;
             buttonPanel.add(exitButton, gbc);
 
             add(buttonPanel, BorderLayout.CENTER);
@@ -178,7 +222,62 @@ public class GUI {
         }
     }
 
-    // Interface de remoção de produtos
+    // Interface para a inserção de um novo fabricante
+    public class ManufacturerInsertionInterface extends JFrame {
+        private JTextField nameField;
+        private JButton insertButton;
+        private JButton backButton;
+
+        public ManufacturerInsertionInterface() {
+            super("PharmaHub: Inserir fabricante");
+            initComponents();
+            setupLayout();
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            setVisible(true);
+        }
+
+        private void initComponents() {
+            nameField = new JTextField(20);
+            insertButton = new JButton("Inserir");
+            backButton = new JButton("Voltar");
+
+            // Set white text and black background for buttons
+            insertButton.setForeground(Color.WHITE);
+            insertButton.setBackground(Color.BLACK);
+            backButton.setForeground(Color.WHITE);
+            backButton.setBackground(Color.BLACK);
+        }
+
+        private void setupLayout() {
+            JPanel insertPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
+            insertPanel.add(new JLabel("Nome do Fabricante:"), gbc);
+            gbc.gridy = 1;
+            insertPanel.add(nameField, gbc);
+            gbc.gridy = 2;
+            insertPanel.add(insertButton, gbc);
+
+            JPanel bottomPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbcBottom = new GridBagConstraints();
+            gbcBottom.gridx = 0;
+            gbcBottom.gridy = 0;
+            gbcBottom.anchor = GridBagConstraints.CENTER;
+            bottomPanel.add(backButton, gbcBottom);
+
+            getContentPane().setBackground(Color.WHITE); // Set background color of JFrame
+
+            getContentPane().setLayout(new BorderLayout()); // Use BorderLayout for placing components
+
+            getContentPane().add(insertPanel, BorderLayout.CENTER);
+            getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+        }
+    }
+
     public class ProductRemoveInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel removePanel = new JPanel(new BorderLayout(10, 10));
@@ -186,6 +285,7 @@ public class GUI {
         JComboBox<String> removeBy = new JComboBox<>();
         JTextField removeField = new JTextField(20);
         JButton removeButton = new JButton("Remover");
+
         JButton backButton = new JButton("Voltar");
 
 
@@ -233,7 +333,6 @@ public class GUI {
             setVisible(true);
         }
 
-        // Remove um produto baseado no ID
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == removeButton) {
                 String removeCriteria = (String) removeBy.getSelectedItem();
@@ -263,9 +362,9 @@ public class GUI {
                 }
             }
         }
+
     }
 
-    // Interface para consulta de produtos
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
@@ -273,6 +372,7 @@ public class GUI {
         JComboBox<String> searchBy = new JComboBox<>();
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Enviar");
+
         JButton backButton = new JButton("Voltar");
 
         public ProductSearchInterface() {
@@ -319,7 +419,6 @@ public class GUI {
             setVisible(true);
         }
 
-        // Invoca funções de busca de produto baseado em um critério selecionado pelo usuário
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == searchButton) {
@@ -345,9 +444,9 @@ public class GUI {
                 }
             }
         }
+
     }
 
-    // Interface para inserção de produtos
     public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel insertPanel = new JPanel(new BorderLayout(10, 10));
@@ -358,6 +457,7 @@ public class GUI {
         JLabel productPriceLabel = new JLabel("Preço: ");
         JTextField productPriceField = new JTextField(20);
         JButton insertButton = new JButton("Inserir");
+
         JButton backButton = new JButton("Voltar");
 
         public ProductInsertionInterface() {
@@ -370,12 +470,11 @@ public class GUI {
             backButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
 
-
             productNameField.setPreferredSize(new Dimension(300, 30));
             productManufacturerNameField.setPreferredSize(new Dimension(300, 30));
             productPriceField.setPreferredSize(new Dimension(300, 30));
 
-            JPanel inputPanel = new JPanel(new GridLayout(2, 2, 10, 10));
+            JPanel inputPanel = new JPanel(new GridLayout(3, 2, 10, 10));
             inputPanel.add(productNameLabel);
             inputPanel.add(productNameField);
             inputPanel.add(productManufacturerNameLabel);
@@ -406,7 +505,6 @@ public class GUI {
             setVisible(true);
         }
 
-        // Evento para inserir um novo produto, checa se o fabricante já existe
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == insertButton) {
@@ -422,11 +520,9 @@ public class GUI {
                         Product p = new Product(null, productName, productPrice, m);
                         if (DatabaseManager.insertProduct(p)) {
                             JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
-                        }
-                        else
+                        } else
                             JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto.");
-                    }
-                    else
+                    } else
                         JOptionPane.showMessageDialog(this, "Erro ao cadastrar produto.");
                 } catch (SQLException ex) {
                     throw new RuntimeException(ex);
@@ -435,22 +531,23 @@ public class GUI {
                 }
             }
         }
+
     }
 
-    // Interface de registro de usuários
     public class RegisterInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
-        JPanel registerPanel = new JPanel(new GridBagLayout());
 
+        JPanel registerPanel = new JPanel(new GridBagLayout());
         JLabel registrationField = new JLabel("Informe seus dados para se registrar: ");
         JLabel usernameLabel = new JLabel("Nome de Usuário: ");
         JLabel passwordLabel = new JLabel("Senha: ");
-        JLabel confirmPasswordLabel = new JLabel("Confirme a Senha: ");
 
+        JLabel confirmPasswordLabel = new JLabel("Confirme a Senha: ");
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
         JPasswordField confirmPasswordField = new JPasswordField(20);
         JButton submitButton = new JButton("Enviar");
+
         JButton backButton = new JButton("Voltar");
 
         public RegisterInterface() {
