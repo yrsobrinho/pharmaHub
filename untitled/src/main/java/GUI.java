@@ -388,8 +388,6 @@ public class GUI {
                 }
             }
         }
-
-
     }
 
     public class ProductSearchInterface extends JFrame implements ActionListener {
@@ -401,6 +399,9 @@ public class GUI {
         JButton searchButton = new JButton("Enviar");
 
         JButton backButton = new JButton("Voltar");
+
+        JTable productTable;
+        JScrollPane scrollPane;
 
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
@@ -415,7 +416,6 @@ public class GUI {
             backButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
 
-
             searchField.setPreferredSize(new Dimension(300, 30));
 
             JPanel comboBoxPanel = new JPanel(new BorderLayout(5, 5));
@@ -426,9 +426,14 @@ public class GUI {
             searchPanel.add(searchField, BorderLayout.CENTER);
             searchPanel.add(searchButton, BorderLayout.SOUTH);
 
-            centralizeItems.add(searchPanel);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(20, 0, 0, 0); // Padding at the top
+            gbc.anchor = GridBagConstraints.CENTER;
+            centralizeItems.add(searchPanel, gbc);
 
-            add(centralizeItems, BorderLayout.CENTER);
+            add(centralizeItems, BorderLayout.NORTH);
 
             JPanel bottomPanel = new JPanel();
             bottomPanel.add(backButton);
@@ -459,19 +464,45 @@ public class GUI {
                         products = DatabaseManager.searchByProductName(searchText);
                     else if (searchCriteria.equals("ID do Fabricante"))
                         products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(searchText));
-                    else if (searchCriteria.equals("Nome do Fabricante"))
-                        products = DatabaseManager.searchProductsByManufacturerName(searchText);
                     if (products.size() > 0) {
-                        // Colocar logica para mostrar produtos
+                        displayProducts(products);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
                     }
                 } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(this, "Erro ao acessar o banco de dados: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(this, "Erro ao acessar o banco de dados: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "ID do Fabricante deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
 
+        private void displayProducts(List<Product> products) {
+            String[] columnNames = {"ID", "Nome", "Preço", "ID do Fabricante", "Nome do Fabricante"};
+            Object[][] data = new Object[products.size()][5];
+
+            for (int i = 0; i < products.size(); i++) {
+                Product product = products.get(i);
+                data[i][0] = product.getId();
+                data[i][1] = product.getName();
+                data[i][2] = product.getPrice();
+                //data[i][3] = product.getManufacturerId();
+                //data[i][4] = product.getManufacturerName();  // Supondo que o método existe
+            }
+
+            if (scrollPane != null) {
+                remove(scrollPane);
+            }
+
+            productTable = new JTable(data, columnNames);
+            scrollPane = new JScrollPane(productTable);
+
+            add(scrollPane, BorderLayout.CENTER);
+            revalidate();
+            repaint();
+        }
     }
 
     public class ProductInsertionInterface extends JFrame implements ActionListener {
