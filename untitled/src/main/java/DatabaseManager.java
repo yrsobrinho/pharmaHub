@@ -217,6 +217,17 @@ public class DatabaseManager {
         return affectedRows != 0;
     }
 
+    public static boolean deleteProductByName(String name) throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String sql = "DELETE FROM TB_PRODUCTS WHERE NAME = ?";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setString(1, name);
+        int affectedRows = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return affectedRows != 0;
+    }
+
     // Registra fabricante
     public static boolean insertManufacturer(Manufacturer manufacturer) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();

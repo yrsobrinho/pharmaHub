@@ -356,13 +356,23 @@ public class GUI {
 
                 List<Product> products = new ArrayList<>();
                 try {
-                    if (removeCriteria.equals("Nome"))
+                    if (removeCriteria.equals("Nome")) {
                         products = DatabaseManager.searchByProductName(removeText);
-                    else if (removeCriteria.equals("ID do Fabricante"))
+                    } else if (removeCriteria.equals("ID do Fabricante")) {
                         products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(removeText));
+                    }
+
                     if (products.size() > 0) {
-                        // Assuming there is a method to remove product in DatabaseManager
-                        if (DatabaseManager.deleteProductById(products.get(0).getId())) {
+                        Product productToRemove = products.get(0);
+                        boolean removed = false;
+
+                        if (removeCriteria.equals("Nome")) {
+                            removed = DatabaseManager.deleteProductByName(productToRemove.getName());
+                        } else if (removeCriteria.equals("ID do Fabricante")) {
+                            removed = DatabaseManager.deleteProductById(productToRemove.getId());
+                        }
+
+                        if (removed) {
                             JOptionPane.showMessageDialog(this, "Produto removido com sucesso");
                         } else {
                             JOptionPane.showMessageDialog(this, "Erro ao remover o produto");
@@ -370,13 +380,15 @@ public class GUI {
                     } else {
                         JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
                     }
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                } catch (ClassNotFoundException ex) {
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "ID do Fabricante deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException | ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, "Erro ao acessar o banco de dados: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                     throw new RuntimeException(ex);
                 }
             }
         }
+
 
     }
 
