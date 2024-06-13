@@ -73,7 +73,7 @@ public class GUI {
             mainPanel.add(registerButton, gbc);
 
             // Adiciona o botão Sair
-            JButton exitButton = new JButton("Sair");
+            JButton exitButton = new JButton("Fechar aplicação");
             exitButton.setPreferredSize(new Dimension(200, 50));
             exitButton.setBackground(Color.WHITE);
             exitButton.setForeground(Color.BLACK);
@@ -100,11 +100,20 @@ public class GUI {
                 }
             });
 
-            // Fecha a aplicação
+            // Fecha a aplicação com confirmação
             exitButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    System.exit(0);
+                    int response = JOptionPane.showConfirmDialog(
+                            InitialInterface.this,
+                            "Tem certeza de que deseja encerrar a aplicação?",
+                            "PharmaHub: Confirmação",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+                    if (response == JOptionPane.YES_OPTION) {
+                        System.exit(0);
+                    }
                 }
             });
 
@@ -129,7 +138,7 @@ public class GUI {
             JButton productInsertButton = new JButton("Inserir Produtos");
             JButton productRemoveButton = new JButton("Remover Produtos");
             JButton addManufacturerButton = new JButton("Adicionar Fabricante");
-            JButton exitButton = new JButton("Sair");
+            JButton exitButton = new JButton("Voltar à tela inicial");
 
             Dimension buttonSize = new Dimension(200, 50);
             productSearchButton.setPreferredSize(buttonSize);
@@ -197,7 +206,6 @@ public class GUI {
                 }
             });
 
-            // Layout buttons on the panel
             gbc.gridx = 0;
             gbc.gridy = 0;
             buttonPanel.add(productSearchButton, gbc);
@@ -230,31 +238,27 @@ public class GUI {
 
         public ManufacturerInsertionInterface() {
             super("PharmaHub: Inserir fabricante");
-            initComponents();
-            setupLayout();
+            setWindowIcon(this);
+
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
-        }
 
-        private void initComponents() {
             nameField = new JTextField(20);
             insertButton = new JButton("Inserir");
             backButton = new JButton("Voltar");
 
-            // Set white text and black background for buttons
-            insertButton.setForeground(Color.WHITE);
-            insertButton.setBackground(Color.BLACK);
-            backButton.setForeground(Color.WHITE);
-            backButton.setBackground(Color.BLACK);
-        }
+            insertButton.setForeground(Color.BLACK);
+            insertButton.setBackground(Color.WHITE);
+            backButton.setForeground(Color.BLACK);
+            backButton.setBackground(Color.WHITE);
 
-        private void setupLayout() {
             JPanel insertPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx = 0;
             gbc.gridy = 0;
+            gbc.insets = new Insets(10, 10, 10, 10);
             gbc.anchor = GridBagConstraints.CENTER;
             insertPanel.add(new JLabel("Nome do Fabricante:"), gbc);
             gbc.gridy = 1;
@@ -266,15 +270,26 @@ public class GUI {
             GridBagConstraints gbcBottom = new GridBagConstraints();
             gbcBottom.gridx = 0;
             gbcBottom.gridy = 0;
+            gbcBottom.insets = new Insets(10, 10, 10, 10); // Add some padding
             gbcBottom.anchor = GridBagConstraints.CENTER;
             bottomPanel.add(backButton, gbcBottom);
 
-            getContentPane().setBackground(Color.WHITE); // Set background color of JFrame
+            getContentPane().setBackground(Color.WHITE);
 
-            getContentPane().setLayout(new BorderLayout()); // Use BorderLayout for placing components
+            getContentPane().setLayout(new BorderLayout());
 
             getContentPane().add(insertPanel, BorderLayout.CENTER);
             getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+
+            backButton.addActionListener(e -> {
+                new GeneralInterface();
+                dispose();
+            });
+
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            setVisible(true);
         }
     }
 
