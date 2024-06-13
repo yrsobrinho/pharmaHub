@@ -1,5 +1,5 @@
 public class Manufacturer {
-    private int id;
+    private Integer id;
     private String name;
 
     public Manufacturer(Integer id, String name) {

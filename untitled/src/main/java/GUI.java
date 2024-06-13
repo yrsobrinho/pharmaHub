@@ -20,6 +20,7 @@ import java.util.List;
 // Interface para inserção de produtos
 // Evento para inserir um novo produto, checa se o fabricante já existe
 // Interface de registro de usuários
+
 public class GUI {
 
     private void setWindowIcon(JFrame frame) {
@@ -73,7 +74,7 @@ public class GUI {
             mainPanel.add(registerButton, gbc);
 
             // Adiciona o botão Sair
-            JButton exitButton = new JButton("Fechar aplicação");
+            JButton exitButton = new JButton("Fechar");
             exitButton.setPreferredSize(new Dimension(200, 50));
             exitButton.setBackground(Color.WHITE);
             exitButton.setForeground(Color.BLACK);
@@ -231,7 +232,7 @@ public class GUI {
     }
 
     // Interface para a inserção de um novo fabricante
-    public class ManufacturerInsertionInterface extends JFrame {
+    public class ManufacturerInsertionInterface extends JFrame implements ActionListener {
         private JTextField nameField;
         private JButton insertButton;
         private JButton backButton;
@@ -249,6 +250,7 @@ public class GUI {
             insertButton = new JButton("Inserir");
             backButton = new JButton("Voltar");
 
+            insertButton.addActionListener(this);
             insertButton.setForeground(Color.BLACK);
             insertButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
@@ -290,6 +292,24 @@ public class GUI {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                if (nameField.getText().isBlank()) {
+                    JOptionPane.showMessageDialog(this, "Nome vazio!");
+                    return;
+                }
+                if (DatabaseManager.insertManufacturer(new Manufacturer(null, nameField.getText())))
+                    JOptionPane.showMessageDialog(this, "Fabricante inserido!");
+                else
+                    JOptionPane.showMessageDialog(this, "Erro ao inserir fabricante");
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            } catch (ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
 
