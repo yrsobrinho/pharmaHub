@@ -10,19 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Classe responsável por mostrar e gerenciar as interfaces gráficas
-// Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
-// Interface inicial do programa, com botões de login e registro
-// Interface geral, com opções de consulta, inserção e remoção de produtos
-// Interface de remoção de produtos
-// Remove um produto baseado no ID
-// Interface para consulta de produtos
-// Invoca funções de busca de produto baseado em um critério selecionado pelo usuário
-// Interface para inserção de produtos
-// Evento para inserir um novo produto, checa se o fabricante já existe
-// Interface de registro de usuários
-
 public class GUI {
-
+    // Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
     private void setWindowIcon(JFrame frame) {
         try {
             BufferedImage iconImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
@@ -31,7 +20,7 @@ public class GUI {
             System.err.println("Icon image not found.");
         }
     }
-
+    // Interface inicial do programa, com botões de login e registro
     public class InitialInterface extends JFrame {
         public InitialInterface() {
             super("PharmaHub: Início");
@@ -73,7 +62,6 @@ public class GUI {
             gbc.gridx = 1;
             mainPanel.add(registerButton, gbc);
 
-            // Adiciona o botão Sair
             JButton exitButton = new JButton("Fechar");
             exitButton.setPreferredSize(new Dimension(200, 50));
             exitButton.setBackground(Color.WHITE);
@@ -126,6 +114,7 @@ public class GUI {
         }
     }
 
+    // Interface geral, com opções de consulta, inserção e remoção de produtos
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
@@ -301,7 +290,7 @@ public class GUI {
                     JOptionPane.showMessageDialog(this, "Nome vazio!");
                     return;
                 }
-                if (DatabaseManager.insertManufacturer(new Manufacturer(null, nameField.getText())))
+                if (DatabaseManager.insertManufacturer(new Manufacturer(null, nameField.getText().trim())))
                     JOptionPane.showMessageDialog(this, "Fabricante inserido!");
                 else
                     JOptionPane.showMessageDialog(this, "Erro ao inserir fabricante");
@@ -313,6 +302,7 @@ public class GUI {
         }
     }
 
+    // Interface de remoção de produtos
     public class ProductRemoveInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel removePanel = new JPanel(new BorderLayout(10, 10));
@@ -410,6 +400,7 @@ public class GUI {
         }
     }
 
+    // Interface para consulta de produtos
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
@@ -509,7 +500,7 @@ public class GUI {
                 data[i][1] = product.getName();
                 data[i][2] = product.getPrice();
                 //data[i][3] = product.getManufacturerId();
-                //data[i][4] = product.getManufacturerName();  // Supondo que o método existe
+                //data[i][4] = product.getManufacturerName();
             }
 
             if (scrollPane != null) {
@@ -525,6 +516,7 @@ public class GUI {
         }
     }
 
+    // Interface para inserção de produtos
     public class ProductInsertionInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel insertPanel = new JPanel(new BorderLayout(10, 10));
@@ -586,9 +578,9 @@ public class GUI {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == insertButton) {
-                String productName = productNameField.getText();
-                String productManufacturerName = productManufacturerNameField.getText();
-                Double productPrice = Double.parseDouble(productPriceField.getText());
+                String productName = productNameField.getText().trim();
+                String productManufacturerName = productManufacturerNameField.getText().trim();
+                Double productPrice = Double.parseDouble(productPriceField.getText().trim());
                 JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nNome do Fabricante: " + productManufacturerName);
 
                 Manufacturer m;
@@ -612,6 +604,7 @@ public class GUI {
 
     }
 
+    // Interface de registro de usuários
     public class RegisterInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
 

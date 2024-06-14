@@ -70,12 +70,12 @@ public class DatabaseManager {
         checkProduct.setString(1, product.getName());
         ResultSet resultSet = checkProduct.executeQuery();
         resultSet.next();
-        checkProduct.close();
 
         try {
             String nameCheck = resultSet.getString("NAME");
             if (nameCheck != null) {
                 connection.close();
+                checkProduct.close();
                 return false;
             }
         } catch (Exception e) {}
