@@ -58,16 +58,37 @@ public class DatabaseManager {
         return false;
     }
 
+    public static List<Product> findAll() throws SQLException, ClassNotFoundException {
+        Connection connection = DatabaseManager.getConnection();
+        String sql = "SELECT * FROM TB_PRODUCTS";
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery(sql);
+        List<Product> products = new ArrayList<>();
+        while (rs.next()) {
+            Integer id = rs.getInt("ID");
+            String name = rs.getString("NAME");
+            Double price = rs.getDouble("PRICE");
+            Manufacturer m = DatabaseManager.searchManufacturerById(rs.getInt("MANUFACTURER_ID"));
+
+            if (m != null)
+                products.add(new Product(id, name, price, m));
+        }
+        statement.close();
+        connection.close();
+        return products;
+    }
+
     // Registra produto no banco de dados, checando se não há um registro com o mesmo nome
     public static boolean insertProduct(Product product) throws SQLException, ClassNotFoundException {
         Connection connection = DatabaseManager.getConnection();
         String sql = "INSERT INTO TB_PRODUCTS(NAME, MANUFACTURER_ID, PRICE) VALUES (?, ?, ?)";
-        String checkIfExists = "SELECT * FROM TB_PRODUCTS WHERE NAME = ?";
+        String checkIfExists = "SELECT * FROM TB_PRODUCTS WHERE NAME = ? AND MANUFACTURER_ID = ?";
 
         PreparedStatement checkProduct = connection.prepareStatement(checkIfExists);
         PreparedStatement statement = connection.prepareStatement(sql);
 
         checkProduct.setString(1, product.getName());
+        checkProduct.setInt(2, product.getManufacturer().getId());
         ResultSet resultSet = checkProduct.executeQuery();
         resultSet.next();
 
@@ -190,7 +211,8 @@ public class DatabaseManager {
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
         ResultSet rs = statement.executeQuery();
-        if (rs.next()) {
+
+        while (rs.next()) {
             Manufacturer m = DatabaseManager.searchManufacturerById(rs.getInt("MANUFACTURER_ID"));
             int productId = rs.getInt("ID");
             String productName = rs.getString("NAME");

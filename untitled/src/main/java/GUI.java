@@ -20,6 +20,7 @@ public class GUI {
             System.err.println("Icon image not found.");
         }
     }
+
     // Interface inicial do programa, com botões de login e registro
     public class InitialInterface extends JFrame {
         public InitialInterface() {
@@ -403,12 +404,12 @@ public class GUI {
     // Interface para consulta de produtos
     public class ProductSearchInterface extends JFrame implements ActionListener {
         JPanel centralizeItems = new JPanel(new GridBagLayout());
-        JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel searchPanel = new JPanel(new GridBagLayout());
         JLabel searchFieldLabel = new JLabel("Consultar por: ");
         JComboBox<String> searchBy = new JComboBox<>();
         JTextField searchField = new JTextField(20);
         JButton searchButton = new JButton("Enviar");
-
+        JButton showAllButton = new JButton("Mostrar Todos");
         JButton backButton = new JButton("Voltar");
 
         JTable productTable;
@@ -424,42 +425,65 @@ public class GUI {
             searchButton.setBackground(Color.WHITE);
             searchButton.setForeground(Color.BLACK);
 
+            showAllButton.setBackground(Color.WHITE);
+            showAllButton.setForeground(Color.BLACK);
+
             backButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
 
+            Dimension buttonSize = new Dimension(150, 30);
+            searchButton.setPreferredSize(buttonSize);
+            showAllButton.setPreferredSize(buttonSize);
+            backButton.setPreferredSize(buttonSize);
+
             searchField.setPreferredSize(new Dimension(300, 30));
 
-            JPanel comboBoxPanel = new JPanel(new BorderLayout(5, 5));
-            comboBoxPanel.add(searchFieldLabel, BorderLayout.WEST);
-            comboBoxPanel.add(searchBy, BorderLayout.CENTER);
-
-            searchPanel.add(comboBoxPanel, BorderLayout.NORTH);
-            searchPanel.add(searchField, BorderLayout.CENTER);
-            searchPanel.add(searchButton, BorderLayout.SOUTH);
-
             GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(5, 5, 5, 5);
+
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.insets = new Insets(20, 0, 0, 0); // Padding at the top
-            gbc.anchor = GridBagConstraints.CENTER;
-            centralizeItems.add(searchPanel, gbc);
+            gbc.anchor = GridBagConstraints.WEST;
+            searchPanel.add(searchFieldLabel, gbc);
 
-            add(centralizeItems, BorderLayout.NORTH);
+            gbc.gridx = 1;
+            searchPanel.add(searchBy, gbc);
+
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.gridwidth = 2;
+            searchPanel.add(searchField, gbc);
+
+            gbc.gridy = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            searchPanel.add(searchButton, gbc);
+
+            gbc.gridy = 3;
+            searchPanel.add(showAllButton, gbc);
+
+            gbc.gridy = 4;
+            gbc.insets = new Insets(20, 0, 20, 0);
+            searchPanel.add(Box.createVerticalStrut(20), gbc);
+
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(searchPanel, BorderLayout.NORTH);
 
             JPanel bottomPanel = new JPanel();
             bottomPanel.add(backButton);
-            add(bottomPanel, BorderLayout.SOUTH);
+            mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-            searchButton.addActionListener(this);
-            backButton.addActionListener(e -> {
-                new GeneralInterface();
-                dispose();
-            });
-
+            add(mainPanel);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
             setVisible(true);
+
+            searchButton.addActionListener(this);
+            showAllButton.addActionListener(e -> displayAllProducts());
+            backButton.addActionListener(e -> {
+                new GeneralInterface();
+                dispose();
+            });
         }
 
         @Override
@@ -487,6 +511,20 @@ public class GUI {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "ID do Fabricante deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        }
+
+        private void displayAllProducts() {
+            List<Product> products = new ArrayList<>();
+            try {
+                products = DatabaseManager.findAll();
+                if (products.size() > 0) {
+                    displayProducts(products);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
+                }
+            } catch (SQLException | ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Erro ao acessar o banco de dados: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -604,21 +642,18 @@ public class GUI {
 
     }
 
-    // Interface de registro de usuários
-    public class RegisterInterface extends JFrame implements ActionListener {
-        JPanel centralizeItems = new JPanel(new GridBagLayout());
 
+    // Interface para registro do usuário
+    public class RegisterInterface extends JFrame implements ActionListener {
         JPanel registerPanel = new JPanel(new GridBagLayout());
         JLabel registrationField = new JLabel("Informe seus dados para se registrar: ");
         JLabel usernameLabel = new JLabel("Nome de Usuário: ");
         JLabel passwordLabel = new JLabel("Senha: ");
-
         JLabel confirmPasswordLabel = new JLabel("Confirme a Senha: ");
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
         JPasswordField confirmPasswordField = new JPasswordField(20);
         JButton submitButton = new JButton("Enviar");
-
         JButton backButton = new JButton("Voltar");
 
         public RegisterInterface() {
@@ -630,7 +665,6 @@ public class GUI {
 
             backButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
-
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -664,16 +698,14 @@ public class GUI {
             gbc.anchor = GridBagConstraints.CENTER;
             registerPanel.add(submitButton, gbc);
 
-            gbc.gridy++;
-            registerPanel.add(backButton, gbc);
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(registerPanel, BorderLayout.CENTER);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            centralizeItems.add(registerPanel, gbc);
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(backButton);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-            add(centralizeItems);
+            add(mainPanel);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -688,9 +720,9 @@ public class GUI {
         // Realiza o registro de um usuário
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (passwordField.getText().equals(confirmPasswordField.getText())) {
+            if (new String(passwordField.getPassword()).equals(new String(confirmPasswordField.getPassword()))) {
                 try {
-                    if (DatabaseManager.register(usernameField.getText(), passwordField.getText())) {
+                    if (DatabaseManager.register(usernameField.getText(), new String(passwordField.getPassword()))) {
                         new LoginInterface();
                         dispose();
                     } else {
@@ -707,13 +739,10 @@ public class GUI {
 
     // Interface para login do usuário
     public class LoginInterface extends JFrame implements ActionListener {
-        JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel loginPanel = new JPanel(new GridBagLayout());
-
         JLabel loginField = new JLabel("Entre com suas credenciais: ");
         JLabel usernameLabel = new JLabel("Nome de Usuário: ");
         JLabel passwordLabel = new JLabel("Senha: ");
-
         JTextField usernameField = new JTextField(20);
         JPasswordField passwordField = new JPasswordField(20);
         JButton submitButton = new JButton("Enviar");
@@ -728,7 +757,6 @@ public class GUI {
 
             backButton.setBackground(Color.WHITE);
             backButton.setForeground(Color.BLACK);
-
 
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(5, 5, 5, 5);
@@ -756,16 +784,14 @@ public class GUI {
             gbc.anchor = GridBagConstraints.CENTER;
             loginPanel.add(submitButton, gbc);
 
-            gbc.gridy++;
-            loginPanel.add(backButton, gbc);
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.add(loginPanel, BorderLayout.CENTER);
 
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.gridwidth = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            centralizeItems.add(loginPanel, gbc);
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.add(backButton);
+            mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-            add(centralizeItems);
+            add(mainPanel);
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -782,7 +808,7 @@ public class GUI {
         public void actionPerformed(ActionEvent e) {
             boolean authenticated = false;
             try {
-                authenticated = DatabaseManager.login(usernameField.getText(), passwordField.getText());
+                authenticated = DatabaseManager.login(usernameField.getText(), new String(passwordField.getPassword()));
             } catch (SQLException | ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
