@@ -72,16 +72,13 @@ public class DatabaseManager {
         resultSet.next();
         checkProduct.close();
 
-        if (!resultSet.getString("NAME").isEmpty()) {
-            connection.close();
-            return false;
-        }
-
-        /*
-        if (searchManufacturerById(product.getManufacturer().getId()) != null)
-            return false;
-         */
-
+        try {
+            String nameCheck = resultSet.getString("NAME");
+            if (nameCheck != null) {
+                connection.close();
+                return false;
+            }
+        } catch (Exception e) {}
         statement.setString(1, product.getName());
         statement.setInt(2, product.getManufacturer().getId());
         statement.setDouble(3, product.getPrice());
@@ -271,7 +268,7 @@ public class DatabaseManager {
 
     // Cria tabela usuários no banco de dados
     public static void createUserTable() throws SQLException, ClassNotFoundException {
-        String userTableQuery = "CREATE TABLE TB_USERS (id INT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
+        String userTableQuery = "CREATE TABLE TB_USERS (id INTEGER IDENTITY PRIMARY KEY, username VARCHAR(255), password VARCHAR(255))";
         Connection connection = DatabaseManager.getConnection();
         Statement statement = connection.createStatement();
         statement.execute(userTableQuery);
@@ -281,7 +278,7 @@ public class DatabaseManager {
 
     // Cria tabela de fabricantes no banco de dados
     public static void createManufacturerTable() throws SQLException, ClassNotFoundException {
-        String manufacturerTableQuery = "CREATE TABLE TB_MANUFACTURERS (id INT PRIMARY KEY, name VARCHAR(255))";
+        String manufacturerTableQuery = "CREATE TABLE TB_MANUFACTURERS (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255))";
         Connection connection = DatabaseManager.getConnection();
         Statement statement = connection.createStatement();
         statement.execute(manufacturerTableQuery);
@@ -291,7 +288,7 @@ public class DatabaseManager {
 
     // Cria tabela de produtos no banco de dados
     public static void createProductTable() throws SQLException, ClassNotFoundException {
-        String productTableQuery = "CREATE TABLE TB_PRODUCTS (id INT PRIMARY KEY, name VARCHAR(255), price DOUBLE PRECISION, manufacturer_id INT, FOREIGN KEY (manufacturer_id) REFERENCES TB_MANUFACTURERS(id))";
+        String productTableQuery = "CREATE TABLE TB_PRODUCTS (id INTEGER IDENTITY PRIMARY KEY, name VARCHAR(255), price DOUBLE PRECISION, manufacturer_id INT, FOREIGN KEY (manufacturer_id) REFERENCES TB_MANUFACTURERS(id))";
         Connection connection = DatabaseManager.getConnection();
         Statement statement = connection.createStatement();
         statement.execute(productTableQuery);

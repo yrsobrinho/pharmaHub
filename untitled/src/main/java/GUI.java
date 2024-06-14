@@ -589,7 +589,7 @@ public class GUI {
                 String productName = productNameField.getText();
                 String productManufacturerName = productManufacturerNameField.getText();
                 Double productPrice = Double.parseDouble(productPriceField.getText());
-                JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nID do Fabricante: " + productManufacturerName);
+                JOptionPane.showMessageDialog(this, "Nome do Produto: " + productName + "\nNome do Fabricante: " + productManufacturerName);
 
                 Manufacturer m;
                 try {
