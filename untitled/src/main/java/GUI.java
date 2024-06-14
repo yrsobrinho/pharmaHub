@@ -499,8 +499,8 @@ public class GUI {
                 data[i][0] = product.getId();
                 data[i][1] = product.getName();
                 data[i][2] = product.getPrice();
-                //data[i][3] = product.getManufacturerId();
-                //data[i][4] = product.getManufacturerName();
+                data[i][3] = product.getManufacturer().getId();
+                data[i][4] = product.getManufacturer().getName();
             }
 
             if (scrollPane != null) {
