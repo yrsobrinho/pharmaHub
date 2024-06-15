@@ -8,45 +8,46 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // Classe responsável por mostrar e gerenciar as interfaces gráficas
 public class GUI {
     // Troca o ícone padrão da janela por um ícone criado pelos integrantes do grupo
-    private void setWindowIcon(JFrame frame) {
-        try {
-            BufferedImage iconImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
-            frame.setIconImage(iconImage);
-        } catch (IOException e) {
-            System.err.println("Icon image not found.");
-        }
-    }
+//    private void setWindowIcon(JFrame frame) {
+//        try {
+//            BufferedImage iconImage = ImageIO.read(GUI.class.getResource("\\pharmaHub.png"));
+//            frame.setIconImage(iconImage);
+//        } catch (IOException e) {
+//            System.err.println("Icon image not found.");
+//        }
+//    }
 
     // Interface inicial do programa, com botões de login e registro
     public class InitialInterface extends JFrame {
         public InitialInterface() {
             super("PharmaHub: Início");
-            setWindowIcon(this);  // Define o ícone da janela
+       //     setWindowIcon(this);  // Define o ícone da janela
 
             JPanel mainPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(10, 10, 10, 10);
 
-            ImageIcon logoIcon = null;
-            try {
-                BufferedImage logoImage = ImageIO.read(getClass().getResource("/org/example/pharmaHub.png"));
-                Image scaledImage = logoImage.getScaledInstance(400, 400, Image.SCALE_SMOOTH);
-                logoIcon = new ImageIcon(scaledImage);
-            } catch (IOException e) {
-                System.err.println("Logo image not found.");
-            }
-
-            JLabel logoLabel = new JLabel(logoIcon);
+//            ImageIcon logoIcon = null;
+//            try {
+//                BufferedImage logoImage = ImageIO.read(Objects.requireNonNull(GUI.class.getResource("\\pharmaHub.png")));
+//                Image scaledImage = logoImage.getScaledInstance(400, 400, Image.SCALE_SMOOTH);
+//                logoIcon = new ImageIcon(scaledImage);
+//            } catch (IOException e) {
+//                System.err.println("Logo image not found.");
+//            }
+//
+//            JLabel logoLabel = new JLabel(logoIcon);
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(0, 0, 20, 0); // Espaçamento abaixo do logo
-            mainPanel.add(logoLabel, gbc);
+            //mainPanel.add(logoLabel, gbc);
 
             JButton loginButton = new JButton("Login");
             loginButton.setPreferredSize(new Dimension(400, 50));
@@ -119,7 +120,7 @@ public class GUI {
     public class GeneralInterface extends JFrame {
         public GeneralInterface() {
             super("PharmaHub: Principal");
-            setWindowIcon(this);  // Define o ícone da janela
+            //setWindowIcon(this);  // Define o ícone da janela
 
             JPanel buttonPanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
@@ -229,7 +230,7 @@ public class GUI {
 
         public ManufacturerInsertionInterface() {
             super("PharmaHub: Inserir fabricante");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             setLocationRelativeTo(null);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -317,7 +318,7 @@ public class GUI {
 
         public ProductRemoveInterface() {
             super("PharmaHub: Remover produtos");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             removeBy.addItem("Nome");
             removeBy.addItem("ID");
@@ -415,7 +416,7 @@ public class GUI {
 
         public ProductSearchInterface() {
             super("PharmaHub: Consultar produtos");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             searchBy.addItem("Nome");
             searchBy.addItem("ID do Fabricante");
@@ -565,7 +566,7 @@ public class GUI {
 
         public ProductInsertionInterface() {
             super("PharmaHub: Inserir produtos");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             insertButton.setBackground(Color.WHITE);
             insertButton.setForeground(Color.BLACK);
@@ -653,7 +654,7 @@ public class GUI {
 
         public RegisterInterface() {
             super("PharmaHub: Registrar");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             submitButton.setBackground(Color.WHITE);
             submitButton.setForeground(Color.BLACK);
@@ -745,7 +746,7 @@ public class GUI {
 
         public LoginInterface() {
             super("PharmaHub: Login");
-            setWindowIcon(this);
+            //setWindowIcon(this);
 
             submitButton.setBackground(Color.WHITE);
             submitButton.setForeground(Color.BLACK);
