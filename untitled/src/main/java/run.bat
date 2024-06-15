@@ -1,0 +1,1 @@
+start java -classpath ".;hsql.jar" GUI.java
