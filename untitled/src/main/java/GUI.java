@@ -45,31 +45,31 @@ public class GUI {
             gbc.gridy = 0;
             gbc.gridwidth = 2;
             gbc.anchor = GridBagConstraints.CENTER;
+            gbc.insets = new Insets(0, 0, 20, 0); // Espaçamento abaixo do logo
             mainPanel.add(logoLabel, gbc);
 
             JButton loginButton = new JButton("Login");
-            loginButton.setPreferredSize(new Dimension(200, 50));
+            loginButton.setPreferredSize(new Dimension(400, 50));
             loginButton.setBackground(Color.WHITE);
             loginButton.setForeground(Color.BLACK);
             gbc.gridy = 1;
             gbc.gridwidth = 1;
             gbc.anchor = GridBagConstraints.CENTER;
+            gbc.insets = new Insets(0, 0, 10, 0); // Espaçamento entre botões
             mainPanel.add(loginButton, gbc);
 
             JButton registerButton = new JButton("Registrar");
-            registerButton.setPreferredSize(new Dimension(200, 50));
+            registerButton.setPreferredSize(new Dimension(400, 50));
             registerButton.setBackground(Color.WHITE);
             registerButton.setForeground(Color.BLACK);
-            gbc.gridx = 1;
+            gbc.gridy = 2;
             mainPanel.add(registerButton, gbc);
 
             JButton exitButton = new JButton("Fechar");
-            exitButton.setPreferredSize(new Dimension(200, 50));
+            exitButton.setPreferredSize(new Dimension(400, 50));
             exitButton.setBackground(Color.WHITE);
             exitButton.setForeground(Color.BLACK);
-            gbc.gridx = 0;
-            gbc.gridy = 2;
-            gbc.gridwidth = 2;
+            gbc.gridy = 3;
             mainPanel.add(exitButton, gbc);
 
             // Abre interface de login de usuário
@@ -401,9 +401,7 @@ public class GUI {
         }
     }
 
-    // Interface para consulta de produtos
     public class ProductSearchInterface extends JFrame implements ActionListener {
-        JPanel centralizeItems = new JPanel(new GridBagLayout());
         JPanel searchPanel = new JPanel(new GridBagLayout());
         JLabel searchFieldLabel = new JLabel("Consultar por: ");
         JComboBox<String> searchBy = new JComboBox<>();
@@ -461,10 +459,6 @@ public class GUI {
             gbc.gridy = 3;
             searchPanel.add(showAllButton, gbc);
 
-            gbc.gridy = 4;
-            gbc.insets = new Insets(20, 0, 20, 0);
-            searchPanel.add(Box.createVerticalStrut(20), gbc);
-
             JPanel mainPanel = new JPanel(new BorderLayout());
             mainPanel.add(searchPanel, BorderLayout.NORTH);
 
@@ -472,11 +466,7 @@ public class GUI {
             bottomPanel.add(backButton);
             mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-            add(mainPanel);
-            setLocationRelativeTo(null);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setExtendedState(JFrame.MAXIMIZED_BOTH);
-            setVisible(true);
+            add(mainPanel, BorderLayout.NORTH);
 
             searchButton.addActionListener(this);
             showAllButton.addActionListener(e -> displayAllProducts());
@@ -484,6 +474,11 @@ public class GUI {
                 new GeneralInterface();
                 dispose();
             });
+
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            setVisible(true);
         }
 
         @Override
