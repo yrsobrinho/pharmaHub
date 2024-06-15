@@ -1,1 +1,2 @@
-java -classpath .:hsql.jar GUI.java
+#!/bin/bash
+java -classpath .:hsql.jar GUI
