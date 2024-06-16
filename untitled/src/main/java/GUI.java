@@ -367,30 +367,24 @@ public class GUI {
                 JOptionPane.showMessageDialog(this, "Remover por: " + removeCriteria + "\nTermo de remoção: " + removeText);
 
                 List<Product> products = new ArrayList<>();
+                Product product = null;
                 try {
                     if (removeCriteria.equals("Nome")) {
                         products = DatabaseManager.searchByProductName(removeText);
-                    } else if (removeCriteria.equals("ID do Fabricante")) {
-                        products = DatabaseManager.searchProductsByManufacturerId(Integer.parseInt(removeText));
-                    }
-
-                    if (products.size() > 0) {
-                        Product productToRemove = products.get(0);
-                        boolean removed = false;
-
-                        if (removeCriteria.equals("Nome")) {
-                            removed = DatabaseManager.deleteProductByName(productToRemove.getName());
-                        } else if (removeCriteria.equals("ID do Fabricante")) {
-                            removed = DatabaseManager.deleteProductById(productToRemove.getId());
-                        }
-
-                        if (removed) {
+                        if (products.size() > 0) {
+                            DatabaseManager.deleteProductByName(products.get(0).getName());
                             JOptionPane.showMessageDialog(this, "Produto removido com sucesso");
-                        } else {
-                            JOptionPane.showMessageDialog(this, "Erro ao remover o produto");
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Nenhum produto encontrado");
+                        else
+                            JOptionPane.showMessageDialog(this, "Produto não encontrado!");
+                    } else if (removeCriteria.equals("ID")) {
+                        product = DatabaseManager.searchByProductId(Integer.parseInt(removeText));
+                        if (product != null) {
+                            DatabaseManager.deleteProductById(product.getId());
+                            JOptionPane.showMessageDialog(this, "Produto removido com sucesso");
+                        }
+                        else
+                            JOptionPane.showMessageDialog(this, "Produto não encontrado!");
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "ID do Fabricante deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);

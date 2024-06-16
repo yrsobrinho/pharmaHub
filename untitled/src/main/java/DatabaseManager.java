@@ -230,10 +230,10 @@ public class DatabaseManager {
         String sql = "DELETE FROM TB_PRODUCTS WHERE ID = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, id);
-        int affectedRows = statement.executeUpdate();
+        statement.executeUpdate();
         statement.close();
         connection.close();
-        return affectedRows != 0;
+        return true;
     }
 
     public static boolean deleteProductByName(String name) throws SQLException, ClassNotFoundException {
@@ -241,10 +241,10 @@ public class DatabaseManager {
         String sql = "DELETE FROM TB_PRODUCTS WHERE NAME = ?";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setString(1, name);
-        int affectedRows = statement.executeUpdate();
+        statement.executeUpdate();
         statement.close();
         connection.close();
-        return affectedRows != 0;
+        return true;
     }
 
     // Registra fabricante
